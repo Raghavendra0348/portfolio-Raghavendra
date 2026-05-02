@@ -1,6 +1,7 @@
 import React, { useEffect, useRef } from 'react';
 
-// Organic blob whose CENTER follows a lemniscate (∞ symbol) path continuously
+// Spinning fan vortex — overlapping petal blades rotating in a circle
+// Inspired by the reference: layered fan petals with black accent highlight zone
 export default function FloatingBackground() {
   const canvasRef = useRef(null);
 
@@ -10,72 +11,124 @@ export default function FloatingBackground() {
     const ctx = canvas.getContext('2d');
     let W, H, animId;
 
-    const N = 16; // points on blob perimeter
-    const phases = Array.from({ length: N }, (_, i) => (i / N) * Math.PI * 2);
-    const freqs  = Array.from({ length: N }, () => 0.35 + Math.random() * 0.45);
-    const amps   = Array.from({ length: N }, () => 0.13 + Math.random() * 0.14);
-
     let t = 0;
+    const N = 30;          // number of petals
+    const SPEED = 0.007;   // rotation speed
 
     function resize() {
       W = canvas.width  = canvas.offsetWidth;
       H = canvas.height = canvas.offsetHeight;
     }
 
-    // Lemniscate of Bernoulli — ∞ symbol parametric
-    // x(t) = a·cos(t) / (1 + sin²(t))
-    // y(t) = a·sin(t)·cos(t) / (1 + sin²(t))
-    function infinityCenter(t) {
-      const a  = Math.min(W, H) * 0.28;   // size of the ∞ loop
-      const st = Math.sin(t), ct = Math.cos(t);
-      const denom = 1 + st * st;
-      return {
-        x: W / 2 + (a * ct)      / denom,
-        y: H / 2 + (a * st * ct) / denom,
-      };
-    }
+    // Draw a single surfboard-shaped petal
+    // positioned at (0, -midR) in local space, along Y axis
+    function petalPath(ctx, innerR, outerR, halfW) {
+      const len  = outerR - innerR;
+      const h4   = len * 0.25;
+      const topY = -outerR;
+      const botY = -innerR;
+      const midY = -(innerR + len / 2);
 
-    function getPoints(cx, cy, t) {
-      const base = Math.min(W, H) * 0.22;
-      return Array.from({ length: N }, (_, i) => {
-        const angle = (i / N) * Math.PI * 2;
-        const r = base * (1
-          + amps[i]            * Math.sin(freqs[i]        * t + phases[i])
-          + amps[i] * 0.45     * Math.sin(freqs[i] * 2.3  * t + phases[i] + 1.1)
-        );
-        return { x: cx + Math.cos(angle) * r, y: cy + Math.sin(angle) * r };
-      });
-    }
-
-    function drawBlob(pts) {
-      const n = pts.length;
       ctx.beginPath();
-      for (let i = 0; i < n; i++) {
-        const cur  = pts[i];
-        const nxt  = pts[(i + 1) % n];
-        const prv  = pts[(i - 1 + n) % n];
-        const nn   = pts[(i + 2) % n];
-        if (i === 0) ctx.moveTo(cur.x, cur.y);
-        const k = 0.42;
-        ctx.bezierCurveTo(
-          cur.x + (nxt.x - prv.x) * k / 2,
-          cur.y + (nxt.y - prv.y) * k / 2,
-          nxt.x - (nn.x  - cur.x) * k / 2,
-          nxt.y - (nn.y  - cur.y) * k / 2,
-          nxt.x, nxt.y
-        );
-      }
+      ctx.moveTo(0, topY);
+      // left side: out from tip → wide middle → back to base
+      ctx.bezierCurveTo(-halfW * 0.35, topY + h4,
+                        -halfW,        midY,
+                        -halfW * 0.35, botY - h4);
+      ctx.bezierCurveTo(-halfW * 0.1, botY, halfW * 0.1, botY,
+                        halfW * 0.35, botY - h4);
+      // right side back to tip
+      ctx.bezierCurveTo(halfW,        midY,
+                        halfW * 0.35, topY + h4,
+                        0,            topY);
       ctx.closePath();
-      ctx.fillStyle = '#000000';
-      ctx.fill();
     }
 
     function tick() {
       ctx.clearRect(0, 0, W, H);
-      t += 0.012; // speed of travel along ∞ path
 
-      const { x: cx, y: cy } = infinityCenter(t);
-      drawBlob(getPoints(cx, cy, t));
+      const cx   = W / 2;
+      const cy   = H / 2;
+      const size = Math.min(W, H);
+
+      const outerR = size * 0.40;
+      const innerR = size * 0.16;
+      const halfW  = (outerR - innerR) * 0.20;  // half-width of each petal
+
+      // Fan blade tilt — petals sweep backwards like real fan blades
+      const TILT = -Math.PI / 6;
+
+      t += SPEED;
+
+      // Highlight spotlight angle (rotates with the fan = static relative to fan)
+      // Black petals occupy roughly 12% of the circle
+      const HIGHLIGHT_N = 4;
+
+      for (let i = 0; i < N; i++) {
+        const baseAngle = (i / N) * Math.PI * 2 + t;
+
+        // ─── Per-petal color ───
+        // Highlight zone: last HIGHLIGHT_N petals drawn = on top + black accent
+        const isHighlight = i >= N - HIGHLIGHT_N;
+        const highlightFrac = isHighlight
+          ? (i - (N - HIGHLIGHT_N)) / (HIGHLIGHT_N - 1)  // 0 → 1
+          : -1;
+
+        let fillColor, alpha, shadowBlur, shadowColor;
+
+        if (isHighlight) {
+          // Transition from dark-gray → pure black + slight glow
+          const g = Math.floor(40 - highlightFrac * 40);
+          fillColor   = `rgb(${g},${g},${g})`;
+          alpha       = 0.9 + highlightFrac * 0.1;
+          shadowBlur  = highlightFrac * 18;
+          shadowColor = 'rgba(0,0,0,0.35)';
+        } else {
+          // Petals cycle from white (back) to light gray (just before highlight)
+          const p  = i / (N - HIGHLIGHT_N);
+          const gv = Math.floor(235 - p * 55);   // 235 → 180
+          fillColor  = `rgb(${gv},${gv},${gv})`;
+          alpha      = 0.55 + p * 0.30;
+          shadowBlur = 4 + p * 8;
+          shadowColor = 'rgba(0,0,0,0.18)';
+        }
+
+        ctx.save();
+        ctx.globalAlpha  = alpha;
+        ctx.shadowBlur   = shadowBlur;
+        ctx.shadowColor  = shadowColor;
+        ctx.shadowOffsetX = 2;
+        ctx.shadowOffsetY = 3;
+
+        ctx.translate(cx, cy);
+        ctx.rotate(baseAngle + TILT);
+
+        petalPath(ctx, innerR, outerR, halfW);
+        ctx.fillStyle = fillColor;
+        ctx.fill();
+
+        // Subtle highlight sheen on non-black petals
+        if (!isHighlight) {
+          ctx.shadowBlur = 0;
+          const grad = ctx.createLinearGradient(0, -outerR, 0, -innerR);
+          grad.addColorStop(0,   'rgba(255,255,255,0.45)');
+          grad.addColorStop(0.5, 'rgba(255,255,255,0.10)');
+          grad.addColorStop(1,   'rgba(255,255,255,0.0)');
+          ctx.fillStyle = grad;
+          ctx.fill();
+        } else {
+          // Sheen on black petals — subtle white glint near tip
+          ctx.shadowBlur = 0;
+          const glint = ctx.createRadialGradient(0, -outerR + (outerR - innerR) * 0.18, 0,
+                                                  0, -outerR + (outerR - innerR) * 0.18, halfW * 1.2);
+          glint.addColorStop(0,   'rgba(255,255,255,0.55)');
+          glint.addColorStop(1,   'rgba(255,255,255,0.0)');
+          ctx.fillStyle = glint;
+          ctx.fill();
+        }
+
+        ctx.restore();
+      }
 
       animId = requestAnimationFrame(tick);
     }
