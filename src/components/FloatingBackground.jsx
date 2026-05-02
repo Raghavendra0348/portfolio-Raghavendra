@@ -1,66 +1,6 @@
 import React, { useEffect, useRef } from 'react';
 
-class Blob {
-  constructor(x, y, radius, numPoints, speed, drift) {
-    this.cx = x;
-    this.cy = y;
-    this.baseRadius = radius;
-    this.numPoints = numPoints;
-    this.speed = speed;
-    this.phases = Array.from({ length: numPoints }, () => Math.random() * Math.PI * 2);
-    this.freqs  = Array.from({ length: numPoints }, () => 0.5 + Math.random() * 1.0);
-    this.amps   = Array.from({ length: numPoints }, () => radius * (0.15 + Math.random() * 0.25));
-    this.vx = (Math.random() - 0.5) * drift * 2;
-    this.vy = (Math.random() - 0.5) * drift * 2;
-    this.time = Math.random() * 100;
-    this.W = 1; this.H = 1;
-  }
-
-  update() {
-    this.time += this.speed;
-    this.cx += this.vx;
-    this.cy += this.vy;
-    const pad = this.baseRadius * 2;
-    if (this.cx >  this.W + pad) this.cx = -pad;
-    if (this.cx < -pad)          this.cx =  this.W + pad;
-    if (this.cy >  this.H + pad) this.cy = -pad;
-    if (this.cy < -pad)          this.cy =  this.H + pad;
-  }
-
-  getPoints() {
-    return Array.from({ length: this.numPoints }, (_, i) => {
-      const angle = (i / this.numPoints) * Math.PI * 2;
-      const r = this.baseRadius
-        + this.amps[i] * Math.sin(this.freqs[i] * this.time + this.phases[i]);
-      return { x: this.cx + Math.cos(angle) * r, y: this.cy + Math.sin(angle) * r };
-    });
-  }
-
-  draw(ctx) {
-    const pts = this.getPoints();
-    const n = pts.length;
-    ctx.beginPath();
-    for (let i = 0; i < n; i++) {
-      const curr     = pts[i];
-      const next     = pts[(i + 1) % n];
-      const prev     = pts[(i - 1 + n) % n];
-      const nextnext = pts[(i + 2) % n];
-      if (i === 0) ctx.moveTo(curr.x, curr.y);
-      const t = 0.45;
-      ctx.bezierCurveTo(
-        curr.x + (next.x - prev.x) * t / 2,
-        curr.y + (next.y - prev.y) * t / 2,
-        next.x - (nextnext.x - curr.x) * t / 2,
-        next.y - (nextnext.y - curr.y) * t / 2,
-        next.x, next.y
-      );
-    }
-    ctx.closePath();
-    ctx.fillStyle = 'rgba(0,0,0,0.82)';
-    ctx.fill();
-  }
-}
-
+// One single large organic blob — morphs continuously as a unified shape
 export default function FloatingBackground() {
   const canvasRef = useRef(null);
 
@@ -69,34 +9,81 @@ export default function FloatingBackground() {
     if (!canvas) return;
     const ctx = canvas.getContext('2d');
     let W, H, animId;
-    let blobs = [];
 
-    function build() {
-      const s = Math.min(W, H);
-      blobs = [
-        new Blob(W * 0.10, H * 0.50, s * 0.26, 10, 0.022, 1.8),
-        new Blob(W * 0.80, H * 0.20, s * 0.16, 9,  0.030, 2.2),
-        new Blob(W * 0.62, H * 0.65, s * 0.10, 8,  0.040, 2.8),
-        new Blob(W * 0.38, H * 0.28, s * 0.07, 7,  0.050, 3.2),
-        new Blob(W * 0.90, H * 0.80, s * 0.20, 10, 0.018, 1.5),
-      ];
-      blobs.forEach(b => { b.W = W; b.H = H; });
-    }
+    const NUM_POINTS = 14;
+    // Each point has its own phase + frequency for smooth organic morph
+    const phases = Array.from({ length: NUM_POINTS }, () => Math.random() * Math.PI * 2);
+    const freqs  = Array.from({ length: NUM_POINTS }, () => 0.4 + Math.random() * 0.5);
+
+    let time = 0;
+    // Blob center drifts slowly
+    let cx = 0, cy = 0;
+    let vx = 0.6, vy = 0.35;
 
     function resize() {
       W = canvas.width  = canvas.offsetWidth;
       H = canvas.height = canvas.offsetHeight;
-      build();
+      cx = W * 0.42;
+      cy = H * 0.50;
+    }
+
+    function getPoints(t) {
+      const baseR = Math.min(W, H) * 0.38;
+      return Array.from({ length: NUM_POINTS }, (_, i) => {
+        const angle = (i / NUM_POINTS) * Math.PI * 2;
+        // Multiple harmonic layers for rich organic shape
+        const r = baseR
+          + baseR * 0.22 * Math.sin(freqs[i]       * t + phases[i])
+          + baseR * 0.12 * Math.sin(freqs[i] * 2.1 * t + phases[i] * 1.3)
+          + baseR * 0.07 * Math.sin(freqs[i] * 3.7 * t + phases[i] * 0.7);
+        return { x: cx + Math.cos(angle) * r, y: cy + Math.sin(angle) * r };
+      });
+    }
+
+    function drawBlob(pts) {
+      const n = pts.length;
+      ctx.beginPath();
+      for (let i = 0; i < n; i++) {
+        const curr     = pts[i];
+        const next     = pts[(i + 1) % n];
+        const prev     = pts[(i - 1 + n) % n];
+        const nextnext = pts[(i + 2) % n];
+        if (i === 0) ctx.moveTo(curr.x, curr.y);
+        const tension = 0.42;
+        ctx.bezierCurveTo(
+          curr.x + (next.x - prev.x) * tension / 2,
+          curr.y + (next.y - prev.y) * tension / 2,
+          next.x - (nextnext.x - curr.x) * tension / 2,
+          next.y - (nextnext.y - curr.y) * tension / 2,
+          next.x, next.y
+        );
+      }
+      ctx.closePath();
+      ctx.fillStyle = '#000000';
+      ctx.fill();
     }
 
     function tick() {
       ctx.clearRect(0, 0, W, H);
-      blobs.forEach(b => { b.W = W; b.H = H; b.update(); b.draw(ctx); });
+      time += 0.018;
+
+      // Drift center
+      cx += vx;
+      cy += vy;
+      // Bounce off edges (with base radius margin)
+      const margin = Math.min(W, H) * 0.22;
+      if (cx > W + margin) cx = -margin;
+      if (cx < -margin)    cx =  W + margin;
+      if (cy > H + margin) cy = -margin;
+      if (cy < -margin)    cy =  H + margin;
+
+      drawBlob(getPoints(time));
       animId = requestAnimationFrame(tick);
     }
 
     resize();
     tick();
+
     const ro = new ResizeObserver(resize);
     ro.observe(canvas);
     return () => { cancelAnimationFrame(animId); ro.disconnect(); };
