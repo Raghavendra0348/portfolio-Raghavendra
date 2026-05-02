@@ -16,45 +16,73 @@ export default function Navbar() {
 
   useEffect(() => {
     const fn = () => setScrolled(window.scrollY > 60);
-    window.addEventListener('scroll', fn);
+    window.addEventListener('scroll', fn, { passive: true });
     return () => window.removeEventListener('scroll', fn);
   }, []);
 
   return (
     <>
-      {/* ─── Hanging pill navbar ─── */}
-      <div className="fixed top-0 left-0 right-0 z-40 flex justify-center pt-5 px-4 pointer-events-none">
+      {/* ── Outer strip: shifts top + padding smoothly ── */}
+      <motion.div
+        className="fixed left-0 right-0 z-40 flex justify-center pointer-events-none"
+        animate={{
+          top:          scrolled ? 0  : 20,
+          paddingLeft:  scrolled ? 0  : 16,
+          paddingRight: scrolled ? 0  : 16,
+        }}
+        transition={{ duration: 0.5, ease: [0.22, 1, 0.36, 1] }}
+      >
+        {/* ── The pill / bar itself ── */}
         <motion.header
           initial={{ y: -80, opacity: 0 }}
-          animate={{ y: 0, opacity: 1 }}
-          transition={{ duration: 0.6, ease: [0.22, 1, 0.36, 1] }}
-          className={`pointer-events-auto flex items-center justify-between gap-6 px-6 py-3 rounded-full transition-all duration-300 ${
-            scrolled
-              ? 'bg-white/90 backdrop-blur-xl shadow-[0_8px_32px_rgba(0,0,0,0.12)] border border-black/8'
-              : 'bg-white/80 backdrop-blur-lg shadow-[0_4px_20px_rgba(0,0,0,0.08)] border border-black/6'
-          }`}
-          style={{ maxWidth: 720, width: '100%' }}
+          animate={{
+            y:             0,
+            opacity:       1,
+            borderRadius:  scrolled ? 0     : 9999,
+            paddingTop:    scrolled ? 16    : 10,
+            paddingBottom: scrolled ? 16    : 10,
+            paddingLeft:   scrolled ? 40    : 24,
+            paddingRight:  scrolled ? 40    : 24,
+            backgroundColor: scrolled
+              ? 'rgba(255,255,255,0.97)'
+              : 'rgba(255,255,255,0.82)',
+            boxShadow: scrolled
+              ? '0 1px 0 rgba(0,0,0,0.09)'
+              : '0 4px 24px rgba(0,0,0,0.10)',
+          }}
+          transition={{ duration: 0.5, ease: [0.22, 1, 0.36, 1] }}
+          /* maxWidth via style + CSS transition — avoids "none" interpolation issue */
+          style={{
+            maxWidth:             scrolled ? '100%' : 740,
+            width:                '100%',
+            backdropFilter:       'blur(18px)',
+            WebkitBackdropFilter: 'blur(18px)',
+            border:               scrolled
+              ? '0px solid transparent'
+              : '1.5px solid rgba(0,0,0,0.08)',
+            transition: 'max-width 0.5s cubic-bezier(0.22,1,0.36,1)',
+          }}
+          className="pointer-events-auto flex items-center justify-between gap-6"
         >
           {/* Logo */}
-          <a href="#" className="font-['Space_Grotesk'] text-base font-bold text-black tracking-tight shrink-0">
+          <a href="#"
+            className="font-['Space_Grotesk'] text-base font-bold text-black tracking-tight shrink-0">
             RA<span className="text-black/25">.</span>
           </a>
 
           {/* Desktop links */}
           <nav className="hidden md:flex items-center gap-1">
-            {navLinks.map((link, i) => (
+            {navLinks.map((link) => (
               <a key={link.name} href={link.href}
-                className="text-[13px] font-medium text-black/50 hover:text-black transition-colors px-3 py-1.5 rounded-full hover:bg-black/5 font-mono"
-              >
+                className="text-[13px] font-medium text-black/50 hover:text-black transition-colors px-3 py-1.5 rounded-full hover:bg-black/5 font-mono">
                 {link.name}
               </a>
             ))}
           </nav>
 
-          {/* Resume CTA */}
+          {/* Resume pill */}
           <a href="/assets/resume.pdf" target="_blank" rel="noopener noreferrer"
-            className="hidden md:inline-flex items-center gap-1.5 px-4 py-2 rounded-full bg-black text-white text-[13px] font-mono font-medium tracking-wide hover:bg-black/80 transition-colors shrink-0"
-          >
+            className="hidden md:inline-flex items-center px-4 py-2 rounded-full bg-black text-white text-[13px] font-mono font-medium tracking-wide hover:bg-black/75 transition-colors shrink-0">
             Resume
           </a>
 
@@ -64,9 +92,9 @@ export default function Navbar() {
             {mobileMenuOpen ? <X size={20} /> : <Menu size={20} />}
           </button>
         </motion.header>
-      </div>
+      </motion.div>
 
-      {/* ─── Mobile dropdown ─── */}
+      {/* ── Mobile dropdown ── */}
       <AnimatePresence>
         {mobileMenuOpen && (
           <motion.div
@@ -80,15 +108,13 @@ export default function Navbar() {
               {navLinks.map((link) => (
                 <a key={link.name} href={link.href}
                   onClick={() => setMobileMenuOpen(false)}
-                  className="text-sm font-medium text-black/60 hover:text-black hover:bg-black/5 transition-colors px-4 py-3 rounded-xl font-mono"
-                >
+                  className="text-sm font-medium text-black/60 hover:text-black hover:bg-black/5 transition-colors px-4 py-3 rounded-xl font-mono">
                   {link.name}
                 </a>
               ))}
-              <div className="h-px bg-black/6 my-1" />
+              <div className="h-px bg-black/8 my-1" />
               <a href="/assets/resume.pdf" target="_blank" rel="noopener noreferrer"
-                className="text-sm font-mono font-medium text-white bg-black hover:bg-black/80 transition-colors px-4 py-3 rounded-xl text-center"
-              >
+                className="text-sm font-mono font-medium text-white bg-black hover:bg-black/80 transition-colors px-4 py-3 rounded-xl text-center">
                 Resume
               </a>
             </div>
