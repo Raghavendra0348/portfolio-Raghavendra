@@ -1,7 +1,10 @@
 import React, { useEffect, useRef } from 'react';
 
-// Spinning fan vortex — overlapping petal blades rotating in a circle
-// Inspired by the reference: layered fan petals with black accent highlight zone
+/**
+ * 3D torus ring of overlapping leaves.
+ * A spotlight glow smoothly follows the mouse around the ring.
+ * When the mouse leaves, the glow auto-rotates idly.
+ */
 export default function FloatingBackground() {
   const canvasRef = useRef(null);
 
@@ -11,123 +14,176 @@ export default function FloatingBackground() {
     const ctx = canvas.getContext('2d');
     let W, H, animId;
 
-    let t = 0;
-    const N = 30;          // number of petals
-    const SPEED = 0.007;   // rotation speed
+    const N = 28;           // leaves in the ring
+    const TILT = 0.52;      // vertical squish for 3D perspective (1 = flat, 0.5 = tilted)
+
+    // Smooth glow tracking
+    let glowAngle = -Math.PI / 2;  // starts at top
+    let targetGlowAngle = glowAngle;
+    let idleT = 0;
+    let isHovering = false;
+
+    // ── Mouse: compute angle from canvas centre ──────────────────
+    function onMouseMove(e) {
+      const rect = canvas.getBoundingClientRect();
+      const mx = e.clientX - rect.left  - W / 2;
+      const my = (e.clientY - rect.top  - H / 2) / TILT;   // un-squish y
+      const d  = Math.hypot(mx, my);
+      const threshold = Math.min(W, H) * 0.42;
+      if (d < threshold) {
+        targetGlowAngle = Math.atan2(my, mx);
+        isHovering = true;
+      }
+    }
+    function onMouseLeave() { isHovering = false; }
+
+    window.addEventListener('mousemove',  onMouseMove);
+    window.addEventListener('mouseleave', onMouseLeave);
 
     function resize() {
       W = canvas.width  = canvas.offsetWidth;
       H = canvas.height = canvas.offsetHeight;
     }
 
-    // Draw a single surfboard-shaped petal
-    // positioned at (0, -midR) in local space, along Y axis
-    function petalPath(ctx, innerR, outerR, halfW) {
+    // ── Draw one 3D-looking leaf ─────────────────────────────────
+    // Leaf sits in local coords: tip at (0, -outerR), base at (0, -innerR)
+    function drawLeaf(petalAngle, innerR, outerR, halfW, darkFrac) {
+      const cx = W / 2;
+      const cy = H / 2;
       const len  = outerR - innerR;
-      const h4   = len * 0.25;
-      const topY = -outerR;
-      const botY = -innerR;
-      const midY = -(innerR + len / 2);
+      const cos  = Math.cos(petalAngle);
+      const sin  = Math.sin(petalAngle);
 
+      // 4 key points in ring-local polar space, then project
+      function pt(r, sideOffset) {
+        // sideOffset is perpendicular to petal radial direction
+        const px = cos * r - sin * sideOffset;
+        const py = sin * r + cos * sideOffset;
+        return { x: cx + px, y: cy + py * TILT };
+      }
+
+      const base   = innerR;
+      const tip    = outerR;
+      const bulge  = innerR + len * 0.55;  // widest point
+
+      // ── Back face (slightly offset, darker) ──
+      const backOff = len * 0.04;   // 3D thickness illusion
       ctx.beginPath();
-      ctx.moveTo(0, topY);
-      // left side: out from tip → wide middle → back to base
-      ctx.bezierCurveTo(-halfW * 0.35, topY + h4,
-                        -halfW,        midY,
-                        -halfW * 0.35, botY - h4);
-      ctx.bezierCurveTo(-halfW * 0.1, botY, halfW * 0.1, botY,
-                        halfW * 0.35, botY - h4);
-      // right side back to tip
-      ctx.bezierCurveTo(halfW,        midY,
-                        halfW * 0.35, topY + h4,
-                        0,            topY);
+      const btl = pt(tip   + backOff, -halfW * 0.3);
+      const btr = pt(tip   + backOff,  halfW * 0.3);
+      const bbl = pt(base  - backOff, -halfW * 0.25);
+      const bbr = pt(base  - backOff,  halfW * 0.25);
+      const bml = pt(bulge + backOff, -halfW * 0.95);
+      const bmr = pt(bulge + backOff,  halfW * 0.95);
+      ctx.moveTo(bbl.x, bbl.y);
+      ctx.bezierCurveTo(bml.x - backOff, bml.y, btl.x, btl.y, btl.x, btl.y);
+      ctx.lineTo(btr.x, btr.y);
+      ctx.bezierCurveTo(bmr.x + backOff, bmr.y, bbr.x, bbr.y, bbr.x, bbr.y);
       ctx.closePath();
+      const backG = Math.floor(200 - darkFrac * 160);
+      ctx.fillStyle = `rgb(${backG},${backG},${backG})`;
+      ctx.fill();
+
+      // ── Front face ──
+      ctx.beginPath();
+      const tl = pt(tip,   -halfW * 0.22);
+      const tr = pt(tip,    halfW * 0.22);
+      const bl = pt(base,  -halfW * 0.18);
+      const br = pt(base,   halfW * 0.18);
+      const ml = pt(bulge, -halfW);
+      const mr = pt(bulge,  halfW);
+      ctx.moveTo(bl.x, bl.y);
+      ctx.bezierCurveTo(ml.x, ml.y, tl.x, tl.y, tl.x, tl.y);
+      ctx.lineTo(tr.x, tr.y);
+      ctx.bezierCurveTo(mr.x, mr.y, br.x, br.y, br.x, br.y);
+      ctx.closePath();
+
+      // Fill: light-gray → dark based on darkFrac (glow proximity)
+      const g   = Math.floor(235 - darkFrac * 215);
+      ctx.fillStyle = `rgb(${g},${g},${g})`;
+      if (darkFrac > 0.1) {
+        ctx.shadowBlur  = darkFrac * 22;
+        ctx.shadowColor = 'rgba(0,0,0,0.45)';
+      }
+      ctx.fill();
+      ctx.shadowBlur = 0;
+
+      // ── Specular sheen: white gradient on upper-left ──
+      const sheenGrad = ctx.createLinearGradient(
+        ml.x, ml.y,
+        mr.x, mr.y
+      );
+      sheenGrad.addColorStop(0,    `rgba(255,255,255,${0.60 - darkFrac * 0.45})`);
+      sheenGrad.addColorStop(0.40, `rgba(255,255,255,${0.25 - darkFrac * 0.20})`);
+      sheenGrad.addColorStop(1,    `rgba(0,0,0,${darkFrac * 0.08})`);
+      ctx.fillStyle = sheenGrad;
+      ctx.fill();
+
+      // ── Glint dot near tip of darkened leaves ──
+      if (darkFrac > 0.55) {
+        const glintPt = pt(outerR - len * 0.12, 0);
+        const rg = ctx.createRadialGradient(
+          glintPt.x, glintPt.y, 0,
+          glintPt.x, glintPt.y, halfW * 0.7
+        );
+        rg.addColorStop(0,   `rgba(255,255,255,${darkFrac * 0.85})`);
+        rg.addColorStop(0.4, `rgba(255,255,255,${darkFrac * 0.25})`);
+        rg.addColorStop(1,   'rgba(255,255,255,0)');
+        ctx.fillStyle = rg;
+        ctx.fill();
+      }
+    }
+
+    // ── Smooth angle lerp (shortest arc) ────────────────────────
+    function lerpAngle(a, b, t) {
+      let d = b - a;
+      while (d >  Math.PI) d -= Math.PI * 2;
+      while (d < -Math.PI) d += Math.PI * 2;
+      return a + d * t;
     }
 
     function tick() {
       ctx.clearRect(0, 0, W, H);
 
-      const cx   = W / 2;
-      const cy   = H / 2;
-      const size = Math.min(W, H);
+      const size   = Math.min(W, H);
+      const outerR = size * 0.38;
+      const innerR = size * 0.15;
+      const halfW  = (outerR - innerR) * 0.24;
 
-      const outerR = size * 0.40;
-      const innerR = size * 0.16;
-      const halfW  = (outerR - innerR) * 0.20;  // half-width of each petal
+      // Glow angle: follow mouse or idle-rotate
+      if (isHovering) {
+        glowAngle = lerpAngle(glowAngle, targetGlowAngle, 0.07);
+      } else {
+        idleT    += 0.008;
+        glowAngle = lerpAngle(glowAngle, -Math.PI / 2 + idleT, 0.03);
+      }
 
-      // Fan blade tilt — petals sweep backwards like real fan blades
-      const TILT = -Math.PI / 6;
+      // Glow spread: ~80° arc
+      const SPREAD = Math.PI * 0.44;
 
-      t += SPEED;
+      // Sort petals back-to-front for correct 3D overlap
+      // In a tilted ring, petals at bottom (angle ≈ π/2) are "in front"
+      const order = Array.from({ length: N }, (_, i) => i)
+        .sort((a, b) => {
+          const ya = Math.sin((a / N) * Math.PI * 2);
+          const yb = Math.sin((b / N) * Math.PI * 2);
+          return ya - yb; // draw bottom (front) last
+        });
 
-      // Highlight spotlight angle (rotates with the fan = static relative to fan)
-      // Black petals occupy roughly 12% of the circle
-      const HIGHLIGHT_N = 4;
+      for (const i of order) {
+        const petalAngle = (i / N) * Math.PI * 2;
 
-      for (let i = 0; i < N; i++) {
-        const baseAngle = (i / N) * Math.PI * 2 + t;
+        // Angular distance to glow centre
+        let diff = petalAngle - glowAngle;
+        while (diff >  Math.PI) diff -= Math.PI * 2;
+        while (diff < -Math.PI) diff += Math.PI * 2;
+        const dist = Math.abs(diff);
 
-        // ─── Per-petal color ───
-        // Highlight zone: last HIGHLIGHT_N petals drawn = on top + black accent
-        const isHighlight = i >= N - HIGHLIGHT_N;
-        const highlightFrac = isHighlight
-          ? (i - (N - HIGHLIGHT_N)) / (HIGHLIGHT_N - 1)  // 0 → 1
-          : -1;
+        // Smooth glow falloff
+        const raw  = Math.max(0, 1 - dist / SPREAD);
+        const dark = raw * raw * (3 - 2 * raw);  // smoothstep
 
-        let fillColor, alpha, shadowBlur, shadowColor;
-
-        if (isHighlight) {
-          // Transition from dark-gray → pure black + slight glow
-          const g = Math.floor(40 - highlightFrac * 40);
-          fillColor   = `rgb(${g},${g},${g})`;
-          alpha       = 0.9 + highlightFrac * 0.1;
-          shadowBlur  = highlightFrac * 18;
-          shadowColor = 'rgba(0,0,0,0.35)';
-        } else {
-          // Petals cycle from white (back) to light gray (just before highlight)
-          const p  = i / (N - HIGHLIGHT_N);
-          const gv = Math.floor(235 - p * 55);   // 235 → 180
-          fillColor  = `rgb(${gv},${gv},${gv})`;
-          alpha      = 0.55 + p * 0.30;
-          shadowBlur = 4 + p * 8;
-          shadowColor = 'rgba(0,0,0,0.18)';
-        }
-
-        ctx.save();
-        ctx.globalAlpha  = alpha;
-        ctx.shadowBlur   = shadowBlur;
-        ctx.shadowColor  = shadowColor;
-        ctx.shadowOffsetX = 2;
-        ctx.shadowOffsetY = 3;
-
-        ctx.translate(cx, cy);
-        ctx.rotate(baseAngle + TILT);
-
-        petalPath(ctx, innerR, outerR, halfW);
-        ctx.fillStyle = fillColor;
-        ctx.fill();
-
-        // Subtle highlight sheen on non-black petals
-        if (!isHighlight) {
-          ctx.shadowBlur = 0;
-          const grad = ctx.createLinearGradient(0, -outerR, 0, -innerR);
-          grad.addColorStop(0,   'rgba(255,255,255,0.45)');
-          grad.addColorStop(0.5, 'rgba(255,255,255,0.10)');
-          grad.addColorStop(1,   'rgba(255,255,255,0.0)');
-          ctx.fillStyle = grad;
-          ctx.fill();
-        } else {
-          // Sheen on black petals — subtle white glint near tip
-          ctx.shadowBlur = 0;
-          const glint = ctx.createRadialGradient(0, -outerR + (outerR - innerR) * 0.18, 0,
-                                                  0, -outerR + (outerR - innerR) * 0.18, halfW * 1.2);
-          glint.addColorStop(0,   'rgba(255,255,255,0.55)');
-          glint.addColorStop(1,   'rgba(255,255,255,0.0)');
-          ctx.fillStyle = glint;
-          ctx.fill();
-        }
-
-        ctx.restore();
+        drawLeaf(petalAngle, innerR, outerR, halfW, dark);
       }
 
       animId = requestAnimationFrame(tick);
@@ -138,7 +194,12 @@ export default function FloatingBackground() {
 
     const ro = new ResizeObserver(resize);
     ro.observe(canvas);
-    return () => { cancelAnimationFrame(animId); ro.disconnect(); };
+    return () => {
+      cancelAnimationFrame(animId);
+      ro.disconnect();
+      window.removeEventListener('mousemove',  onMouseMove);
+      window.removeEventListener('mouseleave', onMouseLeave);
+    };
   }, []);
 
   return (
