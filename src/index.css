@@ -5,15 +5,14 @@
 @tailwind utilities;
 
 :root {
-  --bg-dark: #000000;
-  --bg-card: #111111;
-  --bg-card-hover: #1a1a1a;
-  --border-color: rgba(255, 255, 255, 0.08);
-  --border-hover: rgba(255, 255, 255, 0.25);
-  --text-main: #f5f5f5;
-  --text-muted: #888888;
+  --bg-dark: #080808;
+  --bg-card: #141414;
+  --bg-card-hover: #1e1e1e;
+  --border-color: rgba(255, 255, 255, 0.12);
+  --border-hover: rgba(255, 255, 255, 0.35);
+  --text-main: #ffffff;
+  --text-muted: #b0b0b0;
   --accent: #ffffff;
-  --accent-dim: rgba(255, 255, 255, 0.6);
 }
 
 body {
@@ -34,24 +33,24 @@ code, .font-mono {
 }
 
 ::selection {
-  background: rgba(255, 255, 255, 0.15);
+  background: rgba(255, 255, 255, 0.2);
   color: #fff;
 }
 
 ::-webkit-scrollbar { width: 6px; }
-::-webkit-scrollbar-track { background: #000; }
-::-webkit-scrollbar-thumb { background: #333; border-radius: 3px; }
-::-webkit-scrollbar-thumb:hover { background: #555; }
+::-webkit-scrollbar-track { background: #080808; }
+::-webkit-scrollbar-thumb { background: #3a3a3a; border-radius: 3px; }
+::-webkit-scrollbar-thumb:hover { background: #666; }
 
 /* ─── TEXT GRADIENT ─── */
 .text-gradient {
-  background: linear-gradient(to right, #ffffff, #888888);
+  background: linear-gradient(to right, #ffffff, #aaaaaa);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   background-clip: text;
 }
 
-/* ─── NOISE OVERLAY ─── */
+/* ─── NOISE ─── */
 .bg-noise {
   position: fixed;
   top: 0; left: 0;
@@ -64,13 +63,13 @@ code, .font-mono {
 
 /* ─── NAVBAR ─── */
 .glass-nav {
-  background: rgba(0, 0, 0, 0.75);
+  background: rgba(8, 8, 8, 0.8);
   backdrop-filter: blur(20px);
   -webkit-backdrop-filter: blur(20px);
-  border-bottom: 1px solid var(--border-color);
+  border-bottom: 1px solid rgba(255,255,255,0.08);
 }
 
-/* ─── CARD ─── */
+/* ─── CARDS ─── */
 .bw-card {
   background: var(--bg-card);
   border: 1px solid var(--border-color);
@@ -78,7 +77,7 @@ code, .font-mono {
 }
 .bw-card:hover {
   border-color: var(--border-hover);
-  box-shadow: 0 0 30px rgba(255,255,255,0.04);
+  box-shadow: 0 0 40px rgba(255,255,255,0.05);
 }
 
 /* ─── BUTTONS ─── */
@@ -95,24 +94,24 @@ code, .font-mono {
 .btn-primary:hover {
   background: transparent;
   color: #ffffff;
-  box-shadow: 0 0 20px rgba(255, 255, 255, 0.15);
+  box-shadow: 0 0 25px rgba(255, 255, 255, 0.18);
 }
 
 .btn-outline {
   background: transparent;
   color: #ffffff;
-  border: 1px solid rgba(255,255,255,0.3);
+  border: 1px solid rgba(255,255,255,0.4);
   transition: all 0.3s ease;
 }
 .btn-outline:hover {
   border-color: #ffffff;
-  box-shadow: 0 0 20px rgba(255,255,255,0.1);
+  box-shadow: 0 0 20px rgba(255,255,255,0.12);
 }
 
 /* ─── SECTION DIVIDER ─── */
 .section-line {
   height: 1px;
-  background: linear-gradient(to right, transparent, rgba(255,255,255,0.15), transparent);
+  background: linear-gradient(to right, transparent, rgba(255,255,255,0.12), transparent);
 }
 
 /* ─── SKILLS MARQUEE ─── */
@@ -146,57 +145,49 @@ code, .font-mono {
   display: flex;
   align-items: center;
   gap: 0.6rem;
-  padding: 0.6rem 1.2rem;
-  background: #111111;
-  border: 1px solid rgba(255,255,255,0.1);
+  padding: 0.65rem 1.3rem;
+  background: #141414;
+  border: 1px solid rgba(255,255,255,0.14);
   border-radius: 2px;
   white-space: nowrap;
   font-family: 'JetBrains Mono', monospace;
-  font-size: 0.8rem;
-  color: #aaaaaa;
+  font-size: 0.82rem;
+  color: #cccccc;
   transition: all 0.25s ease;
+  cursor: default;
 }
 .skill-pill:hover {
-  border-color: rgba(255,255,255,0.4);
+  border-color: rgba(255,255,255,0.5);
   color: #ffffff;
-  background: #1a1a1a;
-}
-.skill-pill svg {
-  opacity: 0.7;
+  background: #1e1e1e;
 }
 
-/* ─── 3D PROJECT CARD ─── */
-.project-3d-wrapper {
-  perspective: 1000px;
-}
-.project-3d-card {
-  transform-style: preserve-3d;
-  transition: transform 0.1s ease;
+/* ─── PROJECT VISUAL PANEL (B&W) ─── */
+.project-panel {
+  background: #111111;
+  border: 1px solid rgba(255,255,255,0.1);
+  overflow: hidden;
   position: relative;
-  background: #0d0d0d;
-  border: 1px solid rgba(255,255,255,0.08);
+  transition: border-color 0.35s ease;
 }
-.project-3d-card .card-shine {
+.project-panel:hover {
+  border-color: rgba(255,255,255,0.3);
+}
+.project-panel::after {
+  content: '';
   position: absolute;
   inset: 0;
-  background: radial-gradient(circle at var(--mx, 50%) var(--my, 50%), rgba(255,255,255,0.06) 0%, transparent 60%);
+  background: linear-gradient(135deg, rgba(255,255,255,0.04) 0%, transparent 60%);
   pointer-events: none;
-  transition: opacity 0.3s;
-  opacity: 0;
-  border-radius: inherit;
-  z-index: 10;
-}
-.project-3d-card:hover .card-shine {
-  opacity: 1;
 }
 
 /* ─── CONTACT FORM ─── */
 .form-input {
   width: 100%;
-  background: #111111;
-  border: 1px solid rgba(255,255,255,0.1);
-  color: #f5f5f5;
-  padding: 0.875rem 1rem;
+  background: #141414;
+  border: 1px solid rgba(255,255,255,0.14);
+  color: #ffffff;
+  padding: 0.9rem 1rem;
   font-family: 'Inter', sans-serif;
   font-size: 0.9rem;
   outline: none;
@@ -205,15 +196,15 @@ code, .font-mono {
 }
 .form-input::placeholder { color: #555; }
 .form-input:focus {
-  border-color: rgba(255,255,255,0.4);
-  box-shadow: 0 0 0 3px rgba(255,255,255,0.04);
+  border-color: rgba(255,255,255,0.5);
+  box-shadow: 0 0 0 3px rgba(255,255,255,0.05);
 }
 .form-label {
   display: block;
-  font-size: 0.75rem;
+  font-size: 0.72rem;
   font-family: 'JetBrains Mono', monospace;
-  color: #888888;
+  color: #999999;
   margin-bottom: 0.5rem;
   text-transform: uppercase;
-  letter-spacing: 0.08em;
+  letter-spacing: 0.1em;
 }

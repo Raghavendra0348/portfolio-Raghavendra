@@ -1,191 +1,165 @@
-import React, { useRef, useState } from 'react';
-import { motion, useMotionValue, useSpring, useTransform } from 'framer-motion';
+import React from 'react';
+import { motion } from 'framer-motion';
 import { useInView } from 'react-intersection-observer';
-import { Github, ExternalLink, ArrowUpRight } from 'lucide-react';
+import { Github, ExternalLink, Terminal, Brain, BookOpen, ShoppingBag, Code, Calculator } from 'lucide-react';
 
 const projects = [
   {
     id: '01',
     title: 'PaperVault',
     subtitle: 'RGUKT Question Paper Repository',
+    tag: 'Full Stack Web App',
+    icon: <BookOpen size={48} strokeWidth={1} />,
     description:
-      'Full-stack platform for RGUKT students to access and manage question papers across campuses. Advanced search and filtering by course, campus, exam type, and year. Secure JWT authentication with bookmarks, download tracking, and an admin dashboard.',
+      'Platform for RGUKT students to access and manage question papers across campuses. Advanced search and filtering by course, campus, exam type, and year. Secure JWT authentication with bookmarks, download tracking, and an admin dashboard for uploads and analytics.',
     tech: ['Node.js', 'Express.js', 'MySQL', 'Sequelize', 'JavaScript'],
     github: 'https://github.com/Raghavendra0348',
     live: null,
-    tag: 'Full Stack Web App',
   },
   {
     id: '02',
     title: 'Medha AI',
     subtitle: 'RGUKT Campus Assistant',
+    tag: 'AI-Powered App · Live',
+    icon: <Brain size={48} strokeWidth={1} />,
     description:
-      'Multilingual AI assistant powered by Gemini API for real-time campus queries. Voice interaction, image analysis, multilingual support. Modules for academics, campus services, and administrative guidance. Role-based authentication for students and admins.',
+      'Multilingual AI assistant using Gemini API for real-time campus queries. Voice interaction, image analysis, and multilingual support. Modules for academics, campus services, and administrative guidance with a complaint tracking system and role-based authentication.',
     tech: ['React', 'Node.js', 'Firebase', 'Gemini API'],
     github: 'https://github.com/Raghavendra0348',
     live: '#',
-    tag: 'AI-Powered App',
   },
   {
     id: '03',
     title: 'Kids Hobbies Prediction',
     subtitle: 'ML Prediction System',
+    tag: 'Machine Learning',
+    icon: <Brain size={48} strokeWidth={1} />,
     description:
       'Machine Learning system to predict hobbies for children (5–12) using Random Forest. 13-parameter prediction model with multi-algorithm comparison. JWT authentication with prediction history, feedback system, and admin dashboard with ML performance visualizations.',
     tech: ['React', 'Django', 'DRF', 'scikit-learn', 'SQLite'],
     github: 'https://github.com/Raghavendra0348',
     live: null,
-    tag: 'Machine Learning',
   },
   {
     id: '04',
     title: 'Bloomer',
     subtitle: 'Video-First E-Commerce Platform',
+    tag: 'Work · Live',
+    icon: <ShoppingBag size={48} strokeWidth={1} />,
     description:
-      'Building a next-generation video-first e-commerce platform for creator-driven commerce. Scalable backend APIs, real-time data handling with Firestore, and interactive UI for seamless watch, swipe, and shop experience.',
+      'Next-generation video-first e-commerce platform focused on creator-driven commerce. Scalable backend APIs with real-time data handling via Firestore, and an interactive UI designed for seamless watch, swipe, and shop experiences.',
     tech: ['Node.js', 'Express.js', 'React.js', 'Firestore'],
     github: 'https://github.com/Raghavendra0348',
     live: '#',
-    tag: 'Live · Work',
   },
   {
     id: '05',
     title: 'Bit Code Converter',
     subtitle: 'Number System Converter',
+    tag: 'Web App · Live',
+    icon: <Code size={48} strokeWidth={1} />,
     description:
-      'Converts between Binary, Decimal, Octal, Hex, generates Gray Codes and Hamming Codes with error detection. Firebase Auth & Google Analytics integration.',
+      'Converts between Binary, Decimal, Octal, Hex, generates Gray Codes and Hamming Codes with error detection. Firebase Auth & Google Analytics integration for user tracking and analytics.',
     tech: ['HTML', 'CSS', 'JavaScript', 'Firebase'],
     github: 'https://github.com/Raghavendra0348/bit-code-converter',
     live: 'https://bit-code-converter.vercel.app/',
-    tag: 'Web App',
-  },
-  {
-    id: '06',
-    title: 'RGUKT CGPA Calculator',
-    subtitle: 'Academic Performance Tool',
-    description:
-      'Responsive SGPA/CGPA calculator for RGUKT students with Firebase authentication, Google Analytics, and Search Console integration. Used by hundreds of students.',
-    tech: ['HTML', 'CSS', 'JavaScript', 'Firebase'],
-    github: 'https://github.com/Raghavendra0348/RGUKT-SGPA-CGPA-Calculator',
-    live: 'https://rgukt-sgpa-cgpa-calculator.vercel.app/',
-    tag: 'Web App',
   },
 ];
 
-function ProjectCard({ project, index }) {
-  const cardRef = useRef(null);
-  const [hovered, setHovered] = useState(false);
-
-  const x = useMotionValue(0);
-  const y = useMotionValue(0);
-  const mx = useMotionValue(50);
-  const my = useMotionValue(50);
-
-  const rotateX = useSpring(useTransform(y, [-0.5, 0.5], [6, -6]), { stiffness: 200, damping: 30 });
-  const rotateY = useSpring(useTransform(x, [-0.5, 0.5], [-6, 6]), { stiffness: 200, damping: 30 });
-
-  const handleMouseMove = (e) => {
-    const rect = cardRef.current.getBoundingClientRect();
-    const nx = (e.clientX - rect.left) / rect.width - 0.5;
-    const ny = (e.clientY - rect.top) / rect.height - 0.5;
-    x.set(nx);
-    y.set(ny);
-    mx.set(((e.clientX - rect.left) / rect.width) * 100);
-    my.set(((e.clientY - rect.top) / rect.height) * 100);
-  };
-
-  const handleMouseLeave = () => {
-    x.set(0);
-    y.set(0);
-    mx.set(50);
-    my.set(50);
-    setHovered(false);
-  };
+function ProjectRow({ project, index }) {
+  const [ref, inView] = useInView({ triggerOnce: true, threshold: 0.12 });
+  const isReversed = index % 2 !== 0;
 
   return (
     <motion.div
-      ref={cardRef}
-      className="project-3d-wrapper"
-      initial={{ opacity: 0, y: 30 }}
-      whileInView={{ opacity: 1, y: 0 }}
-      viewport={{ once: true, amount: 0.15 }}
-      transition={{ duration: 0.6, delay: index * 0.08 }}
-      onMouseMove={handleMouseMove}
-      onMouseEnter={() => setHovered(true)}
-      onMouseLeave={handleMouseLeave}
-      style={{ transformStyle: 'preserve-3d' }}
+      ref={ref}
+      initial={{ opacity: 0, y: 50 }}
+      animate={inView ? { opacity: 1, y: 0 } : {}}
+      transition={{ duration: 0.7 }}
+      className={`flex flex-col ${isReversed ? 'lg:flex-row-reverse' : 'lg:flex-row'} items-stretch gap-0`}
     >
-      <motion.div
-        className="project-3d-card rounded-sm overflow-hidden flex flex-col h-full"
-        style={{ rotateX, rotateY, transformStyle: 'preserve-3d' }}
-      >
-        {/* Shine overlay */}
+      {/* ── Visual panel ── */}
+      <div className="w-full lg:w-[58%] group">
         <motion.div
-          className="absolute inset-0 pointer-events-none z-10 rounded-sm"
-          style={{
-            background: hovered
-              ? `radial-gradient(circle at ${mx.get()}% ${my.get()}%, rgba(255,255,255,0.07) 0%, transparent 60%)`
-              : 'none',
-            transition: 'background 0.1s'
-          }}
-        />
-
-        <div className="p-7 flex flex-col h-full relative z-0">
-          {/* Top row */}
-          <div className="flex items-start justify-between mb-6">
-            <span className="font-mono text-[10px] text-white/20 tracking-[0.2em] uppercase border border-white/8 px-2 py-1 rounded-sm">
-              {project.tag}
-            </span>
-            <div className="flex items-center gap-3 text-white/30">
-              {project.github && (
-                <a href={project.github} target="_blank" rel="noopener noreferrer"
-                  className="hover:text-white transition-colors p-1" title="GitHub">
-                  <Github size={16} />
-                </a>
-              )}
-              {project.live && (
-                <a href={project.live} target="_blank" rel="noopener noreferrer"
-                  className="hover:text-white transition-colors p-1" title="Live">
-                  <ExternalLink size={16} />
-                </a>
-              )}
-            </div>
-          </div>
-
-          {/* Number */}
-          <div className="font-mono text-4xl font-bold text-white/6 mb-3 leading-none select-none">
+          whileHover={{ scale: 1.01 }}
+          transition={{ duration: 0.4 }}
+          className="project-panel rounded-sm w-full h-64 lg:h-full min-h-[280px] flex flex-col items-center justify-center relative overflow-hidden"
+        >
+          {/* Large faint number */}
+          <div className="absolute top-4 right-6 font-mono text-7xl font-bold text-white/[0.04] select-none leading-none">
             {project.id}
           </div>
 
-          {/* Title */}
-          <h3 className="text-xl font-bold text-white mb-1 leading-tight group-hover:text-white transition-colors">
-            {project.title}
-          </h3>
-          <p className="text-white/35 font-mono text-xs mb-4 tracking-wide">{project.subtitle}</p>
+          {/* Grid lines */}
+          <div className="absolute inset-0 opacity-[0.04]"
+            style={{
+              backgroundImage: 'linear-gradient(rgba(255,255,255,0.6) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,0.6) 1px, transparent 1px)',
+              backgroundSize: '40px 40px'
+            }}
+          />
 
-          {/* Description */}
-          <p className="text-white/45 text-sm leading-relaxed mb-6 flex-grow">
-            {project.description}
-          </p>
+          {/* Icon */}
+          <motion.div
+            initial={{ opacity: 0, scale: 0.8 }}
+            animate={inView ? { opacity: 1, scale: 1 } : {}}
+            transition={{ delay: 0.2, duration: 0.5 }}
+            className="text-white/20 group-hover:text-white/40 transition-colors duration-500 mb-6 relative z-10"
+          >
+            {project.icon}
+          </motion.div>
 
-          {/* Tech stack */}
-          <div className="flex flex-wrap gap-2 mt-auto pt-4 border-t border-white/5">
-            {project.tech.map(t => (
-              <span key={t} className="font-mono text-[11px] text-white/30 bg-white/[0.04] px-2 py-0.5 rounded-sm border border-white/5">
-                {t}
-              </span>
-            ))}
+          {/* Project title watermark */}
+          <div className="relative z-10 text-center px-8">
+            <p className="font-mono text-xs text-white/20 uppercase tracking-[0.25em] mb-2">{project.tag}</p>
+            <h4 className="text-2xl md:text-3xl font-bold text-white/25 group-hover:text-white/40 transition-colors duration-500 tracking-tight">
+              {project.title}
+            </h4>
           </div>
-        </div>
 
-        {/* Bottom hover bar */}
+          {/* Hover shine */}
+          <div className="absolute inset-0 bg-gradient-to-br from-white/[0.03] to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none" />
+        </motion.div>
+      </div>
+
+      {/* ── Text panel ── */}
+      <div className={`w-full lg:w-[42%] flex flex-col ${isReversed ? 'lg:items-start lg:text-left' : 'lg:items-end lg:text-right'} py-8 lg:py-0 ${isReversed ? 'lg:pr-0 lg:pl-10' : 'lg:pl-0 lg:pr-10'}`}>
         <motion.div
-          className="h-[2px] bg-gradient-to-r from-transparent via-white/40 to-transparent"
-          initial={{ scaleX: 0, opacity: 0 }}
-          animate={{ scaleX: hovered ? 1 : 0, opacity: hovered ? 1 : 0 }}
-          transition={{ duration: 0.3 }}
-        />
-      </motion.div>
+          initial={{ opacity: 0, x: isReversed ? -20 : 20 }}
+          animate={inView ? { opacity: 1, x: 0 } : {}}
+          transition={{ delay: 0.15, duration: 0.6 }}
+          className="flex flex-col h-full justify-center"
+        >
+          <p className="font-mono text-xs text-white/40 uppercase tracking-[0.2em] mb-3">Featured Project</p>
+          <h3 className="text-2xl md:text-3xl font-bold text-white mb-1 leading-tight">{project.title}</h3>
+          <p className="text-white/40 font-mono text-sm mb-6">{project.subtitle}</p>
+
+          {/* Description card */}
+          <div className="bw-card p-5 rounded-sm mb-6 text-left">
+            <p className="text-white/70 text-sm leading-relaxed">{project.description}</p>
+          </div>
+
+          {/* Tech */}
+          <ul className={`flex flex-wrap gap-3 font-mono text-xs text-white/45 mb-6 ${isReversed ? 'justify-start' : 'lg:justify-end'}`}>
+            {project.tech.map(t => <li key={t}>{t}</li>)}
+          </ul>
+
+          {/* Links */}
+          <div className={`flex items-center gap-4 text-white/50 ${isReversed ? 'justify-start' : 'lg:justify-end'}`}>
+            {project.github && (
+              <a href={project.github} target="_blank" rel="noopener noreferrer"
+                className="hover:text-white transition-colors p-2 hover:bg-white/5 rounded-sm border border-transparent hover:border-white/10" title="GitHub">
+                <Github size={18} />
+              </a>
+            )}
+            {project.live && (
+              <a href={project.live} target="_blank" rel="noopener noreferrer"
+                className="hover:text-white transition-colors p-2 hover:bg-white/5 rounded-sm border border-transparent hover:border-white/10" title="Live Demo">
+                <ExternalLink size={18} />
+              </a>
+            )}
+          </div>
+        </motion.div>
+      </div>
     </motion.div>
   );
 }
@@ -194,29 +168,30 @@ export default function Projects() {
   const [ref, inView] = useInView({ triggerOnce: true, threshold: 0.05 });
 
   return (
-    <section id="projects" className="py-24 relative bg-black">
+    <section id="projects" className="py-24 relative bg-[#080808]">
       <div className="section-line absolute top-0 left-0 right-0" />
       <div className="max-w-7xl mx-auto px-6 md:px-12">
+
         <motion.div
           ref={ref}
-          initial={{ opacity: 0, y: 40 }}
+          initial={{ opacity: 0, y: 30 }}
           animate={inView ? { opacity: 1, y: 0 } : {}}
-          transition={{ duration: 0.7 }}
-          className="mb-16"
+          transition={{ duration: 0.6 }}
+          className="mb-20"
         >
           <div className="flex items-center gap-5 mb-3">
-            <span className="font-mono text-xs text-white/25 tracking-[0.2em] uppercase">04.</span>
+            <span className="font-mono text-xs text-white/30 tracking-[0.2em] uppercase">04.</span>
             <h2 className="text-3xl md:text-4xl font-bold text-white tracking-tight">Projects</h2>
-            <div className="h-px bg-white/8 flex-grow max-w-xs hidden md:block" />
+            <div className="h-px bg-white/10 flex-grow max-w-xs hidden md:block" />
           </div>
-          <p className="text-white/30 font-mono text-sm ml-10 md:ml-14">
-            Things I have built — hover for 3D effect
+          <p className="text-white/40 font-mono text-sm ml-10 md:ml-14">
+            Things I have built
           </p>
         </motion.div>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+        <div className="space-y-20 md:space-y-28">
           {projects.map((project, i) => (
-            <ProjectCard key={project.id} project={project} index={i} />
+            <ProjectRow key={project.id} project={project} index={i} />
           ))}
         </div>
       </div>
