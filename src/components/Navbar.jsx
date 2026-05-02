@@ -11,82 +11,90 @@ const navLinks = [
 ];
 
 export default function Navbar() {
-  const [scrolled, setScrolled]         = useState(false);
+  const [scrolled, setScrolled]             = useState(false);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
   useEffect(() => {
-    const fn = () => setScrolled(window.scrollY > 50);
+    const fn = () => setScrolled(window.scrollY > 60);
     window.addEventListener('scroll', fn);
     return () => window.removeEventListener('scroll', fn);
   }, []);
 
   return (
-    <header className={`fixed top-0 w-full z-40 transition-all duration-300 ${
-      scrolled ? 'bg-black/95 backdrop-blur-md py-4' : 'bg-black py-6'
-    }`}>
-      <div className="max-w-7xl mx-auto px-6 md:px-12 flex items-center justify-between">
-        {/* Logo */}
-        <motion.a href="#"
-          initial={{ opacity: 0, x: -20 }} animate={{ opacity: 1, x: 0 }}
-          className="font-['Space_Grotesk'] text-xl font-bold text-white tracking-tight"
+    <>
+      {/* ─── Hanging pill navbar ─── */}
+      <div className="fixed top-0 left-0 right-0 z-40 flex justify-center pt-5 px-4 pointer-events-none">
+        <motion.header
+          initial={{ y: -80, opacity: 0 }}
+          animate={{ y: 0, opacity: 1 }}
+          transition={{ duration: 0.6, ease: [0.22, 1, 0.36, 1] }}
+          className={`pointer-events-auto flex items-center justify-between gap-6 px-6 py-3 rounded-full transition-all duration-300 ${
+            scrolled
+              ? 'bg-white/90 backdrop-blur-xl shadow-[0_8px_32px_rgba(0,0,0,0.12)] border border-black/8'
+              : 'bg-white/80 backdrop-blur-lg shadow-[0_4px_20px_rgba(0,0,0,0.08)] border border-black/6'
+          }`}
+          style={{ maxWidth: 720, width: '100%' }}
         >
-          RA<span className="text-white/30">.</span>
-        </motion.a>
+          {/* Logo */}
+          <a href="#" className="font-['Space_Grotesk'] text-base font-bold text-black tracking-tight shrink-0">
+            RA<span className="text-black/25">.</span>
+          </a>
 
-        {/* Desktop links */}
-        <nav className="hidden md:flex items-center gap-8">
-          {navLinks.map((link, i) => (
-            <motion.a key={link.name} href={link.href}
-              initial={{ opacity: 0, y: -10 }} animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: i * 0.08 }}
-              className="text-sm font-medium text-white/50 hover:text-white transition-colors font-mono"
-            >
-              <span className="text-white/25 mr-1 text-xs">0{i + 1}.</span>
-              {link.name}
-            </motion.a>
-          ))}
-          <motion.a
-            href="/assets/resume.pdf" target="_blank" rel="noopener noreferrer"
-            initial={{ opacity: 0, scale: 0.9 }} animate={{ opacity: 1, scale: 1 }}
-            transition={{ delay: 0.5 }}
-            className="px-5 py-2 text-sm font-mono tracking-wide rounded-sm border border-white/40 text-white hover:bg-white hover:text-black transition-all"
+          {/* Desktop links */}
+          <nav className="hidden md:flex items-center gap-1">
+            {navLinks.map((link, i) => (
+              <a key={link.name} href={link.href}
+                className="text-[13px] font-medium text-black/50 hover:text-black transition-colors px-3 py-1.5 rounded-full hover:bg-black/5 font-mono"
+              >
+                {link.name}
+              </a>
+            ))}
+          </nav>
+
+          {/* Resume CTA */}
+          <a href="/assets/resume.pdf" target="_blank" rel="noopener noreferrer"
+            className="hidden md:inline-flex items-center gap-1.5 px-4 py-2 rounded-full bg-black text-white text-[13px] font-mono font-medium tracking-wide hover:bg-black/80 transition-colors shrink-0"
           >
             Resume
-          </motion.a>
-        </nav>
+          </a>
 
-        {/* Mobile toggle */}
-        <button className="md:hidden text-white p-2"
-          onClick={() => setMobileMenuOpen(!mobileMenuOpen)}>
-          {mobileMenuOpen ? <X size={22} /> : <Menu size={22} />}
-        </button>
+          {/* Mobile toggle */}
+          <button className="md:hidden text-black p-1 rounded-full hover:bg-black/6"
+            onClick={() => setMobileMenuOpen(!mobileMenuOpen)}>
+            {mobileMenuOpen ? <X size={20} /> : <Menu size={20} />}
+          </button>
+        </motion.header>
       </div>
 
-      {/* Mobile menu */}
+      {/* ─── Mobile dropdown ─── */}
       <AnimatePresence>
         {mobileMenuOpen && (
           <motion.div
-            initial={{ opacity: 0, height: 0 }} animate={{ opacity: 1, height: 'auto' }}
-            exit={{ opacity: 0, height: 0 }}
-            className="md:hidden bg-black border-t border-white/8 overflow-hidden"
+            initial={{ opacity: 0, y: -10, scale: 0.97 }}
+            animate={{ opacity: 1, y: 0, scale: 1 }}
+            exit={{ opacity: 0, y: -10, scale: 0.97 }}
+            transition={{ duration: 0.2 }}
+            className="fixed top-[72px] left-4 right-4 z-40 bg-white/95 backdrop-blur-xl border border-black/8 rounded-2xl shadow-[0_8px_32px_rgba(0,0,0,0.12)] overflow-hidden"
           >
-            <div className="flex flex-col items-center py-8 gap-5">
-              {navLinks.map((link, i) => (
+            <div className="flex flex-col p-3 gap-1">
+              {navLinks.map((link) => (
                 <a key={link.name} href={link.href}
                   onClick={() => setMobileMenuOpen(false)}
-                  className="text-base font-medium text-white/50 hover:text-white font-mono transition-colors">
-                  <span className="text-white/25 mr-2 text-xs">0{i + 1}.</span>
+                  className="text-sm font-medium text-black/60 hover:text-black hover:bg-black/5 transition-colors px-4 py-3 rounded-xl font-mono"
+                >
                   {link.name}
                 </a>
               ))}
+              <div className="h-px bg-black/6 my-1" />
               <a href="/assets/resume.pdf" target="_blank" rel="noopener noreferrer"
-                className="border border-white/40 text-white px-6 py-3 rounded-sm text-sm font-mono mt-2 hover:bg-white hover:text-black transition-all">
+                className="text-sm font-mono font-medium text-white bg-black hover:bg-black/80 transition-colors px-4 py-3 rounded-xl text-center"
+              >
                 Resume
               </a>
             </div>
           </motion.div>
         )}
       </AnimatePresence>
-    </header>
+    </>
   );
 }

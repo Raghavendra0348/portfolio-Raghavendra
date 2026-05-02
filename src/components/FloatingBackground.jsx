@@ -1,6 +1,6 @@
 import React, { useEffect, useRef } from 'react';
 
-// One single large organic blob — morphs continuously as a unified shape
+// Organic blob whose CENTER follows a lemniscate (∞ symbol) path continuously
 export default function FloatingBackground() {
   const canvasRef = useRef(null);
 
@@ -10,32 +10,39 @@ export default function FloatingBackground() {
     const ctx = canvas.getContext('2d');
     let W, H, animId;
 
-    const NUM_POINTS = 14;
-    // Each point has its own phase + frequency for smooth organic morph
-    const phases = Array.from({ length: NUM_POINTS }, () => Math.random() * Math.PI * 2);
-    const freqs  = Array.from({ length: NUM_POINTS }, () => 0.4 + Math.random() * 0.5);
+    const N = 16; // points on blob perimeter
+    const phases = Array.from({ length: N }, (_, i) => (i / N) * Math.PI * 2);
+    const freqs  = Array.from({ length: N }, () => 0.35 + Math.random() * 0.45);
+    const amps   = Array.from({ length: N }, () => 0.13 + Math.random() * 0.14);
 
-    let time = 0;
-    // Blob center drifts slowly
-    let cx = 0, cy = 0;
-    let vx = 0.6, vy = 0.35;
+    let t = 0;
 
     function resize() {
       W = canvas.width  = canvas.offsetWidth;
       H = canvas.height = canvas.offsetHeight;
-      cx = W * 0.42;
-      cy = H * 0.50;
     }
 
-    function getPoints(t) {
-      const baseR = Math.min(W, H) * 0.38;
-      return Array.from({ length: NUM_POINTS }, (_, i) => {
-        const angle = (i / NUM_POINTS) * Math.PI * 2;
-        // Multiple harmonic layers for rich organic shape
-        const r = baseR
-          + baseR * 0.22 * Math.sin(freqs[i]       * t + phases[i])
-          + baseR * 0.12 * Math.sin(freqs[i] * 2.1 * t + phases[i] * 1.3)
-          + baseR * 0.07 * Math.sin(freqs[i] * 3.7 * t + phases[i] * 0.7);
+    // Lemniscate of Bernoulli — ∞ symbol parametric
+    // x(t) = a·cos(t) / (1 + sin²(t))
+    // y(t) = a·sin(t)·cos(t) / (1 + sin²(t))
+    function infinityCenter(t) {
+      const a  = Math.min(W, H) * 0.28;   // size of the ∞ loop
+      const st = Math.sin(t), ct = Math.cos(t);
+      const denom = 1 + st * st;
+      return {
+        x: W / 2 + (a * ct)      / denom,
+        y: H / 2 + (a * st * ct) / denom,
+      };
+    }
+
+    function getPoints(cx, cy, t) {
+      const base = Math.min(W, H) * 0.22;
+      return Array.from({ length: N }, (_, i) => {
+        const angle = (i / N) * Math.PI * 2;
+        const r = base * (1
+          + amps[i]            * Math.sin(freqs[i]        * t + phases[i])
+          + amps[i] * 0.45     * Math.sin(freqs[i] * 2.3  * t + phases[i] + 1.1)
+        );
         return { x: cx + Math.cos(angle) * r, y: cy + Math.sin(angle) * r };
       });
     }
@@ -44,18 +51,18 @@ export default function FloatingBackground() {
       const n = pts.length;
       ctx.beginPath();
       for (let i = 0; i < n; i++) {
-        const curr     = pts[i];
-        const next     = pts[(i + 1) % n];
-        const prev     = pts[(i - 1 + n) % n];
-        const nextnext = pts[(i + 2) % n];
-        if (i === 0) ctx.moveTo(curr.x, curr.y);
-        const tension = 0.42;
+        const cur  = pts[i];
+        const nxt  = pts[(i + 1) % n];
+        const prv  = pts[(i - 1 + n) % n];
+        const nn   = pts[(i + 2) % n];
+        if (i === 0) ctx.moveTo(cur.x, cur.y);
+        const k = 0.42;
         ctx.bezierCurveTo(
-          curr.x + (next.x - prev.x) * tension / 2,
-          curr.y + (next.y - prev.y) * tension / 2,
-          next.x - (nextnext.x - curr.x) * tension / 2,
-          next.y - (nextnext.y - curr.y) * tension / 2,
-          next.x, next.y
+          cur.x + (nxt.x - prv.x) * k / 2,
+          cur.y + (nxt.y - prv.y) * k / 2,
+          nxt.x - (nn.x  - cur.x) * k / 2,
+          nxt.y - (nn.y  - cur.y) * k / 2,
+          nxt.x, nxt.y
         );
       }
       ctx.closePath();
@@ -65,19 +72,11 @@ export default function FloatingBackground() {
 
     function tick() {
       ctx.clearRect(0, 0, W, H);
-      time += 0.018;
+      t += 0.012; // speed of travel along ∞ path
 
-      // Drift center
-      cx += vx;
-      cy += vy;
-      // Bounce off edges (with base radius margin)
-      const margin = Math.min(W, H) * 0.22;
-      if (cx > W + margin) cx = -margin;
-      if (cx < -margin)    cx =  W + margin;
-      if (cy > H + margin) cy = -margin;
-      if (cy < -margin)    cy =  H + margin;
+      const { x: cx, y: cy } = infinityCenter(t);
+      drawBlob(getPoints(cx, cy, t));
 
-      drawBlob(getPoints(time));
       animId = requestAnimationFrame(tick);
     }
 
