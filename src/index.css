@@ -5,18 +5,19 @@
 @tailwind utilities;
 
 :root {
-  --bg-dark: #f7f7f7;
+  --bg: #f7f7f7;
+  --bg-white: #ffffff;
   --bg-card: #ffffff;
   --bg-card-hover: #f2f2f2;
-  --border-color: rgba(0, 0, 0, 0.1);
-  --border-hover: rgba(0, 0, 0, 0.35);
-  --text-main: #0a0a0a;
-  --text-muted: #555555;
+  --border-color: rgba(0, 0, 0, 0.12);
+  --border-hover: rgba(0, 0, 0, 0.5);
+  --text-main: #000000;
+  --text-muted: #444444;
   --accent: #000000;
 }
 
 body {
-  background-color: var(--bg-dark);
+  background-color: var(--bg);
   color: var(--text-main);
   font-family: 'Inter', sans-serif;
   overflow-x: hidden;
@@ -26,6 +27,7 @@ body {
 
 h1, h2, h3, h4, h5, h6 {
   font-family: 'Space Grotesk', sans-serif;
+  color: #000000;
 }
 
 code, .font-mono {
@@ -39,20 +41,12 @@ code, .font-mono {
 
 ::-webkit-scrollbar { width: 6px; }
 ::-webkit-scrollbar-track { background: #f0f0f0; }
-::-webkit-scrollbar-thumb { background: #ccc; border-radius: 3px; }
-::-webkit-scrollbar-thumb:hover { background: #999; }
-
-/* ─── TEXT GRADIENT ─── */
-.text-gradient {
-  background: linear-gradient(to right, #000000, #555555);
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  background-clip: text;
-}
+::-webkit-scrollbar-thumb { background: #bbb; border-radius: 3px; }
+::-webkit-scrollbar-thumb:hover { background: #888; }
 
 /* ─── NAVBAR ─── */
 .glass-nav {
-  background: rgba(247, 247, 247, 0.85);
+  background: rgba(247, 247, 247, 0.88);
   backdrop-filter: blur(20px);
   -webkit-backdrop-filter: blur(20px);
   border-bottom: 1px solid rgba(0,0,0,0.08);
@@ -61,40 +55,40 @@ code, .font-mono {
 /* ─── CARDS ─── */
 .bw-card {
   background: var(--bg-card);
-  border: 1px solid var(--border-color);
-  transition: border-color 0.3s ease, transform 0.3s ease, box-shadow 0.3s ease;
+  border: 1px solid rgba(0,0,0,0.1);
+  transition: border-color 0.3s ease, box-shadow 0.3s ease;
 }
 .bw-card:hover {
-  border-color: var(--border-hover);
-  box-shadow: 0 4px 30px rgba(0,0,0,0.08);
+  border-color: rgba(0,0,0,0.4);
+  box-shadow: 0 4px 24px rgba(0,0,0,0.07);
 }
 
 /* ─── BUTTONS ─── */
 .btn-primary {
-  background: #0a0a0a;
+  background: #000000;
   color: #ffffff;
-  border: 1px solid #0a0a0a;
-  position: relative;
-  overflow: hidden;
-  transition: all 0.3s ease;
+  border: 1.5px solid #000000;
   font-weight: 600;
   letter-spacing: 0.05em;
+  transition: all 0.25s ease;
+  cursor: pointer;
 }
 .btn-primary:hover {
   background: transparent;
-  color: #0a0a0a;
-  box-shadow: 0 0 20px rgba(0, 0, 0, 0.12);
+  color: #000000;
+  box-shadow: 0 0 0 3px rgba(0,0,0,0.08);
 }
 
 .btn-outline {
   background: transparent;
-  color: #0a0a0a;
-  border: 1px solid rgba(0,0,0,0.35);
-  transition: all 0.3s ease;
+  color: #000000;
+  border: 1.5px solid rgba(0,0,0,0.4);
+  transition: all 0.25s ease;
+  cursor: pointer;
 }
 .btn-outline:hover {
-  border-color: #0a0a0a;
-  background: #0a0a0a;
+  border-color: #000000;
+  background: #000000;
   color: #ffffff;
 }
 
@@ -137,64 +131,60 @@ code, .font-mono {
   gap: 0.6rem;
   padding: 0.65rem 1.3rem;
   background: #ffffff;
-  border: 1px solid rgba(0,0,0,0.12);
+  border: 1.5px solid rgba(0,0,0,0.12);
   border-radius: 2px;
   white-space: nowrap;
   font-family: 'JetBrains Mono', monospace;
   font-size: 0.82rem;
-  color: #444444;
-  transition: all 0.25s ease;
+  color: #000000;
+  transition: all 0.2s ease;
   cursor: default;
 }
 .skill-pill:hover {
-  border-color: rgba(0,0,0,0.45);
-  color: #000000;
-  background: #f5f5f5;
+  border-color: #000000;
+  background: #000000;
+  color: #ffffff;
+}
+.skill-pill:hover svg {
+  color: #ffffff;
 }
 
 /* ─── PROJECT VISUAL PANEL ─── */
 .project-panel {
   background: #ffffff;
-  border: 1px solid rgba(0,0,0,0.1);
+  border: 1.5px solid rgba(0,0,0,0.1);
   overflow: hidden;
   position: relative;
-  transition: border-color 0.35s ease, box-shadow 0.35s ease;
+  transition: border-color 0.3s ease, box-shadow 0.3s ease;
 }
 .project-panel:hover {
-  border-color: rgba(0,0,0,0.3);
+  border-color: rgba(0,0,0,0.45);
   box-shadow: 0 8px 40px rgba(0,0,0,0.08);
-}
-.project-panel::after {
-  content: '';
-  position: absolute;
-  inset: 0;
-  background: linear-gradient(135deg, rgba(0,0,0,0.02) 0%, transparent 60%);
-  pointer-events: none;
 }
 
 /* ─── CONTACT FORM ─── */
 .form-input {
   width: 100%;
   background: #ffffff;
-  border: 1px solid rgba(0,0,0,0.14);
-  color: #0a0a0a;
+  border: 1.5px solid rgba(0,0,0,0.12);
+  color: #000000;
   padding: 0.9rem 1rem;
   font-family: 'Inter', sans-serif;
   font-size: 0.9rem;
   outline: none;
-  transition: border-color 0.25s ease, box-shadow 0.25s ease;
+  transition: border-color 0.2s ease, box-shadow 0.2s ease;
   border-radius: 2px;
 }
 .form-input::placeholder { color: #aaa; }
 .form-input:focus {
-  border-color: rgba(0,0,0,0.4);
-  box-shadow: 0 0 0 3px rgba(0,0,0,0.04);
+  border-color: #000000;
+  box-shadow: 0 0 0 3px rgba(0,0,0,0.05);
 }
 .form-label {
   display: block;
   font-size: 0.72rem;
   font-family: 'JetBrains Mono', monospace;
-  color: #777777;
+  color: #555555;
   margin-bottom: 0.5rem;
   text-transform: uppercase;
   letter-spacing: 0.1em;
