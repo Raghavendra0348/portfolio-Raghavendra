@@ -1,9 +1,9 @@
 import React, { useEffect, useRef } from 'react';
 
 /**
- * Software-rendered 3D petal ring.
- * Real perspective projection + painter's-algorithm z-sort + diffuse lighting.
- * No WebGL required.
+ * 3D petal ring — matches reference:
+ * Smooth rounded-capsule petals in a fan-swept ring,
+ * tilted for 3D perspective, with a travelling glow spotlight.
  */
 export default function FloatingBackground() {
   const canvasRef = useRef(null);
@@ -14,232 +14,149 @@ export default function FloatingBackground() {
     const ctx = canvas.getContext('2d');
     let W, H, animId;
 
-    /* ── Config ─────────────────────────────────────────── */
-    const N          = 28;
-    const RING_R     = 1.9;    // ring radius (world units)
-    const PETAL_LEN  = 0.80;   // leaf length
-    const PETAL_W    = 0.30;   // leaf half-width at widest
-    const DEPTH      = 0.11;   // extrusion thickness
+    /* ─── Config ──────────────────────────────────────── */
+    const N          = 24;      // number of petals
+    const TILT       = 0.50;    // vertical squish (0 = flat, 1 = upright)
+    const SWEEP      = 0.38;    // fan-blade sweep (radians each petal leans)
+    const SPEED      = 0.010;   // glow travel speed
+    const SPREAD     = Math.PI * 0.36;  // glow arc half-width
 
-    /* ── Petal 2-D profile (tangent/up local coords, centred at 0) ── */
-    const profile = [
-      [ 0.00,  0.50],   // tip
-      [-0.18,  0.42],
-      [-PETAL_W, 0.05],
-      [-0.18, -0.45],
-      [ 0.00, -0.50],   // base
-      [ 0.18, -0.45],
-      [ PETAL_W, 0.05],
-      [ 0.18,  0.42],
-    ].map(([x, y]) => [x, y * PETAL_LEN * 1.0]); // scale to PETAL_LEN
+    let glowT  = 0;
+    let rotY   = 0;   // manual drag rotation
+    let tgtRot = 0;
+    let isDrag = false, px0 = 0;
 
-    /* ── 3-D math helpers ───────────────────────────────── */
-    const dot  = (a, b) => a[0]*b[0] + a[1]*b[1] + a[2]*b[2];
-    const norm = v => { const m = Math.hypot(...v); return m ? v.map(c => c/m) : v; };
-    const sub  = (a, b) => [a[0]-b[0], a[1]-b[1], a[2]-b[2]];
-    const cross = (a, b) => [
-      a[1]*b[2] - a[2]*b[1],
-      a[2]*b[0] - a[0]*b[2],
-      a[0]*b[1] - a[1]*b[0],
-    ];
+    canvas.addEventListener('mousedown', e => { isDrag = true; px0 = e.clientX; });
+    window.addEventListener('mouseup',   () => { isDrag = false; });
+    window.addEventListener('mousemove', e => {
+      if (!isDrag) return;
+      tgtRot += (e.clientX - px0) * 0.010;
+      px0 = e.clientX;
+    });
 
-    /* Rotation matrices */
-    function rotY(v, a) {
-      const c = Math.cos(a), s = Math.sin(a);
-      return [c*v[0]+s*v[2], v[1], -s*v[0]+c*v[2]];
-    }
-    function rotX(v, a) {
-      const c = Math.cos(a), s = Math.sin(a);
-      return [v[0], c*v[1]-s*v[2], s*v[1]+c*v[2]];
-    }
-
-    /* Perspective projection */
-    const FOC = 5.5;  // focal length (world units)
-    function project(p) {
-      const z = p[2] + FOC;
-      const s = (z > 0.01 ? FOC / z : FOC / 0.01);
-      // Positioned in right half, vertically centred
-      const scale = Math.min(W, H) / 5.2;
-      const px = W * 0.67 + p[0] * s * scale;
-      const py = H * 0.50 - p[1] * s * scale;
-      return [px, py, p[2]];
-    }
-
-    /* ── Build geometry ─────────────────────────────────── */
-    // Each petal: front polygon, back polygon, side quads
-    function buildPetals() {
-      const petals = [];
-      for (let i = 0; i < N; i++) {
-        const alpha = (i / N) * Math.PI * 2;
-        const cos = Math.cos(alpha), sin = Math.sin(alpha);
-        // Local axes in world space
-        const R = [cos, 0, sin];      // radial (extrusion direction)
-        const T = [-sin, 0, cos];     // tangential
-        const U = [0, 1, 0];          // up
-
-        // Map 2-D profile point → 3-D world (front/back)
-        const front3 = profile.map(([lx, ly]) => [
-          RING_R*cos + T[0]*lx + U[0]*ly + R[0]* DEPTH/2,
-          RING_R*0   + T[1]*lx + U[1]*ly + R[1]* DEPTH/2,
-          RING_R*sin + T[2]*lx + U[2]*ly + R[2]* DEPTH/2,
-        ]);
-        const back3 = profile.map(([lx, ly]) => [
-          RING_R*cos + T[0]*lx + U[0]*ly - R[0]* DEPTH/2,
-          RING_R*0   + T[1]*lx + U[1]*ly - R[1]* DEPTH/2,
-          RING_R*sin + T[2]*lx + U[2]*ly - R[2]* DEPTH/2,
-        ]);
-
-        petals.push({ i, alpha, front3, back3, R, T, U });
-      }
-      return petals;
-    }
-    const basePetals = buildPetals();
-
-    /* ── Mouse / rotation ───────────────────────────────── */
-    let rotYaw = 0,   rotPitch = 0.45;
-    let tgtYaw = 0,   tgtPitch = 0.45;
-    let dragging = false, px0 = 0, py0 = 0;
-    let autoT = 0;
-
-    canvas.style.cursor = 'grab';
-    function onDown(e) { dragging = true; px0 = e.clientX; py0 = e.clientY; canvas.style.cursor = 'grabbing'; }
-    function onUp()    { dragging = false; canvas.style.cursor = 'grab'; }
-    function onMove(e) {
-      if (!dragging) return;
-      tgtYaw   += (e.clientX - px0) * 0.012;
-      tgtPitch += (e.clientY - py0) * 0.008;
-      tgtPitch  = Math.max(-0.9, Math.min(1.4, tgtPitch));
-      px0 = e.clientX; py0 = e.clientY;
-    }
-    canvas.addEventListener('mousedown', onDown);
-    window.addEventListener('mouseup',   onUp);
-    window.addEventListener('mousemove', onMove);
-
-    /* ── Lights ─────────────────────────────────────────── */
-    const KEY_LIGHT   = norm([2, 4, 3]);
-    const FILL_LIGHT  = norm([-2, 1, 2]);
-    const AMBIENT     = 0.32;
-
-    function lightFactor(normal) {
-      const kd = Math.max(0, dot(normal, KEY_LIGHT))  * 0.72;
-      const fd = Math.max(0, dot(normal, FILL_LIGHT)) * 0.28;
-      return Math.min(1, AMBIENT + kd + fd);
-    }
-
-    /* ── Resize ─────────────────────────────────────────── */
     function resize() {
       W = canvas.width  = canvas.offsetWidth;
       H = canvas.height = canvas.offsetHeight;
     }
 
-    /* ── Draw polygon ───────────────────────────────────── */
-    function drawPoly(pts2d, fillStyle, shadowAmt) {
-      if (pts2d.length < 2) return;
+    /* ─── Draw one petal ──────────────────────────────── */
+    // In local space: petal long-axis = Y, centred at origin
+    // pw = half-width, ph = half-height
+    function petalPath(pw, ph) {
       ctx.beginPath();
-      ctx.moveTo(pts2d[0][0], pts2d[0][1]);
-      for (let k = 1; k < pts2d.length; k++) ctx.lineTo(pts2d[k][0], pts2d[k][1]);
+      // Fully-rounded capsule (stadium shape)
+      ctx.moveTo(-pw, -ph + pw);
+      ctx.arc(0, -ph + pw, pw, Math.PI, 0);
+      ctx.lineTo(pw, ph - pw);
+      ctx.arc(0, ph - pw, pw, 0, Math.PI);
       ctx.closePath();
-      ctx.fillStyle = fillStyle;
-      if (shadowAmt > 0) {
-        ctx.shadowBlur  = shadowAmt;
-        ctx.shadowColor = 'rgba(0,0,0,0.55)';
-      }
-      ctx.fill();
-      ctx.shadowBlur = 0;
     }
 
-    /* ── Main loop ──────────────────────────────────────── */
+    /* ─── Render loop ─────────────────────────────────── */
     function tick() {
       animId = requestAnimationFrame(tick);
       ctx.clearRect(0, 0, W, H);
 
-      autoT  += 0.010;
-      if (!dragging) tgtYaw += 0.008;
-      rotYaw   += (tgtYaw   - rotYaw)   * 0.06;
-      rotPitch += (tgtPitch - rotPitch) * 0.06;
+      const S  = Math.min(W, H);
+      const cr = S * 0.38;          // ring radius (canvas px)
+      const pw = cr * 0.145;        // petal half-width
+      const ph = cr * 0.38;         // petal half-height
+      const cx = W * 0.66;          // ring centre-X (right half)
+      const cy = H * 0.50;          // ring centre-Y
 
-      /* ── Spotlight position (auto-rotates around ring) ── */
-      const spotAngle = autoT;
+      glowT += SPEED;
+      if (!isDrag) tgtRot += 0.004;
+      rotY += (tgtRot - rotY) * 0.06;
 
-      /* ── Build renderable polygons ── */
-      const faces = [];
+      // Build petal descriptors sorted back-to-front
+      const petals = [];
+      for (let i = 0; i < N; i++) {
+        const base  = (i / N) * Math.PI * 2 + rotY;
+        // Petal centre position in 3D-ish space
+        const x3    = Math.cos(base) * cr;
+        const y3raw = Math.sin(base) * cr;
+        const y2    = y3raw * TILT;         // flattened for tilt
+        const z     = y3raw;                // z-depth = raw y (not squished)
 
-      basePetals.forEach(({ i, alpha, front3, back3, R }) => {
-        // Apply rotation to all vertices
-        const applyRot = v => rotX(rotY(v, rotYaw), rotPitch);
+        // Petal draw rotation: radial direction + sweep offset
+        const drawAngle = base + SWEEP;
 
-        const fr = front3.map(applyRot);
-        const bk = back3.map(applyRot);
-        const rn = applyRot(R);   // rotated outward normal (front face)
-
-        // Face centre (average z) for depth sorting
-        const fz = fr.reduce((s, v) => s + v[2], 0) / fr.length;
-        const bz = bk.reduce((s, v) => s + v[2], 0) / bk.length;
-
-        /* ── Lighting ─────────────────────────────── */
-        // Angular distance of this petal from spotlight
-        let diff = alpha - spotAngle;
+        // Glow amount (0-1) based on proximity to spotlight
+        let diff = base - glowT;
         while (diff >  Math.PI) diff -= Math.PI * 2;
         while (diff < -Math.PI) diff += Math.PI * 2;
-        const rawGlow = Math.max(0, 1 - Math.abs(diff) / (Math.PI * 0.38));
-        const glow    = rawGlow * rawGlow * (3 - 2 * rawGlow); // smoothstep
+        const raw  = Math.max(0, 1 - Math.abs(diff) / SPREAD);
+        const glow = raw * raw * (3 - 2 * raw);
 
-        // Base lighting from geometry normal
-        const lit = lightFactor(rn);
+        petals.push({ x: cx + x3, y: cy + y2, z, drawAngle, glow, i });
+      }
 
-        // Final colour: white → black based on glow
-        const baseGray = Math.round(240 * lit);
-        const finalGray = Math.round(baseGray * (1 - glow * 0.92));
-        const shade = `rgb(${finalGray},${finalGray},${finalGray})`;
+      // Painter: draw from back (most negative z) to front
+      petals.sort((a, b) => a.z - b.z);
 
-        // Sheen: lighter stripe on front face
-        const sheenGray = Math.min(255, finalGray + 35);
-        const sheen = `rgba(${sheenGray},${sheenGray},${sheenGray},0.45)`;
+      for (const { x, y, drawAngle, glow } of petals) {
+        ctx.save();
+        ctx.translate(x, y);
+        ctx.rotate(drawAngle);
 
-        // Side face (top edge only - visible seam)
-        for (let k = 0; k < profile.length; k++) {
-          const k2 = (k + 1) % profile.length;
-          const sideVerts = [fr[k], fr[k2], bk[k2], bk[k]];
-          const sz = sideVerts.reduce((s, v) => s + v[2], 0) / 4;
-          // Side normal = cross product
-          const sn = norm(cross(sub(fr[k2], fr[k]), sub(bk[k], fr[k])));
-          const sideLit = lightFactor(sn);
-          const sg = Math.round(200 * sideLit * (1 - glow * 0.7));
-          faces.push({
-            z:    sz,
-            pts2d: sideVerts.map(project),
-            fill:  `rgb(${sg},${sg},${sg})`,
-            shadow: 0,
-          });
+        // ── Side edge (thin 3-D depth strip) ──────────
+        ctx.save();
+        ctx.translate(pw * 0.6, pw * 0.15);
+        ctx.scale(0.22, 0.97);
+        petalPath(pw, ph);
+        const edgeG = Math.round(170 - glow * 110);
+        ctx.fillStyle = `rgb(${edgeG},${edgeG},${edgeG})`;
+        ctx.fill();
+        ctx.restore();
+
+        // ── Main face ─────────────────────────────────
+        petalPath(pw, ph);
+
+        // Main face colour: light-gray (0 glow) → black (full glow)
+        const baseGray = 240;
+        const fg = Math.round(baseGray - glow * (baseGray - 8));
+
+        // Gradient: lighter top-left edge (the "bevel highlight")
+        const grad = ctx.createLinearGradient(-pw, -ph, pw * 0.6, ph * 0.3);
+        const hi  = Math.min(255, fg + 55);
+        const lo  = Math.max(0,   fg - 20);
+        grad.addColorStop(0,   `rgb(${hi},${hi},${hi})`);
+        grad.addColorStop(0.4, `rgb(${fg},${fg},${fg})`);
+        grad.addColorStop(1,   `rgb(${lo},${lo},${lo})`);
+        ctx.fillStyle = grad;
+
+        // Drop shadow for depth
+        ctx.shadowColor  = 'rgba(0,0,0,0.28)';
+        ctx.shadowBlur   = 8 + glow * 14;
+        ctx.shadowOffsetX = 2;
+        ctx.shadowOffsetY = 4;
+        ctx.fill();
+        ctx.shadowBlur = 0; ctx.shadowOffsetX = 0; ctx.shadowOffsetY = 0;
+
+        // ── Specular glint on glowing petals ──────────
+        if (glow > 0.3) {
+          petalPath(pw, ph);
+          const glintR = pw * 0.7;
+          const glintX = -pw * 0.18;
+          const glintY = -ph * 0.55;
+          const glint  = ctx.createRadialGradient(glintX, glintY, 0, glintX, glintY, glintR);
+          glint.addColorStop(0,   `rgba(255,255,255,${glow * 0.90})`);
+          glint.addColorStop(0.45,`rgba(255,255,255,${glow * 0.30})`);
+          glint.addColorStop(1,   'rgba(255,255,255,0)');
+          ctx.fillStyle = glint;
+          ctx.fill();
         }
 
-        // Back face (flip normal)
-        const backNorm = rn.map(c => -c);
-        const backLit  = lightFactor(backNorm);
-        const bg       = Math.round(210 * backLit * (1 - glow * 0.6));
-        faces.push({
-          z:    bz - 0.001,
-          pts2d: [...bk].reverse().map(project),
-          fill:  `rgb(${bg},${bg},${bg})`,
-          shadow: 0,
-        });
+        // ── Bevel highlight — thin top-left rim ───────
+        petalPath(pw, ph);
+        const bev = ctx.createLinearGradient(-pw, -ph, -pw * 0.1, 0);
+        bev.addColorStop(0,   `rgba(255,255,255,${0.55 - glow * 0.35})`);
+        bev.addColorStop(0.6, 'rgba(255,255,255,0.06)');
+        bev.addColorStop(1,   'rgba(255,255,255,0)');
+        ctx.fillStyle = bev;
+        ctx.fill();
 
-        // Front face
-        faces.push({
-          z:    fz,
-          pts2d: fr.map(project),
-          fill:  shade,
-          sheen,
-          shadow: glow * 18,
-        });
-      });
-
-      /* ── Painter's algorithm: back → front ── */
-      faces.sort((a, b) => a.z - b.z);
-
-      for (const face of faces) {
-        drawPoly(face.pts2d, face.fill, face.shadow || 0);
-        if (face.sheen) drawPoly(face.pts2d, face.sheen, 0);
+        ctx.restore();
       }
     }
 
@@ -248,13 +165,11 @@ export default function FloatingBackground() {
 
     const ro = new ResizeObserver(resize);
     ro.observe(canvas);
-
     return () => {
       cancelAnimationFrame(animId);
       ro.disconnect();
-      canvas.removeEventListener('mousedown', onDown);
-      window.removeEventListener('mouseup',   onUp);
-      window.removeEventListener('mousemove', onMove);
+      window.removeEventListener('mouseup',   () => {});
+      window.removeEventListener('mousemove', () => {});
     };
   }, []);
 
@@ -262,7 +177,7 @@ export default function FloatingBackground() {
     <canvas
       ref={canvasRef}
       className="absolute inset-0 w-full h-full"
-      style={{ zIndex: 0, cursor: 'grab' }}
+      style={{ zIndex: 0, cursor: 'grab', pointerEvents: 'none' }}
     />
   );
 }
