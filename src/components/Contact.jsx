@@ -14,7 +14,6 @@ export default function Contact() {
   const handleSubmit = async (e) => {
     e.preventDefault();
     setSending(true);
-    // Simulate send — opens mailto as fallback
     await new Promise(r => setTimeout(r, 800));
     const subject = encodeURIComponent(form.subject || 'Portfolio Contact');
     const body = encodeURIComponent(`Name: ${form.name}\nEmail: ${form.email}\n\n${form.message}`);
@@ -37,7 +36,7 @@ export default function Contact() {
   ];
 
   return (
-    <section id="contact" className="py-28 relative bg-black">
+    <section id="contact" className="py-28 relative bg-white">
       <div className="section-line absolute top-0 left-0 right-0" />
       <div className="max-w-7xl mx-auto px-6 md:px-12">
         <motion.div
@@ -47,50 +46,46 @@ export default function Contact() {
           transition={{ duration: 0.7 }}
         >
           <div className="flex items-center gap-5 mb-4">
-            <span className="font-mono text-xs text-white/25 tracking-[0.2em] uppercase">06.</span>
-            <h2 className="text-3xl md:text-4xl font-bold text-white tracking-tight">Get In Touch</h2>
-            <div className="h-px bg-white/8 flex-grow max-w-xs hidden md:block" />
+            <span className="font-mono text-xs text-black/25 tracking-[0.2em] uppercase">06.</span>
+            <h2 className="text-3xl md:text-4xl font-bold text-black tracking-tight">Get In Touch</h2>
+            <div className="h-px bg-black/8 flex-grow max-w-xs hidden md:block" />
           </div>
-          <p className="text-white/35 text-sm ml-10 md:ml-14 mb-16 max-w-lg">
+          <p className="text-black/40 text-sm ml-10 md:ml-14 mb-16 max-w-lg">
             Open to new opportunities, freelance projects, and collaborations. Drop a message and I'll get back to you.
           </p>
 
           <div className="grid grid-cols-1 lg:grid-cols-5 gap-10 items-start">
 
-            {/* ─── LEFT: Info + socials ─── */}
+            {/* Left */}
             <div className="lg:col-span-2 space-y-8">
-
-              {/* Contact items */}
               <div className="space-y-4">
                 {contactItems.map((item) => (
                   <div key={item.label} className="flex items-start gap-4 group">
-                    <div className="w-9 h-9 rounded-sm border border-white/8 flex items-center justify-center text-white/35 group-hover:border-white/20 group-hover:text-white/60 transition-all flex-shrink-0">
+                    <div className="w-9 h-9 rounded-sm border border-black/10 bg-black/[0.02] flex items-center justify-center text-black/35 group-hover:border-black/25 group-hover:text-black/60 transition-all flex-shrink-0">
                       {item.icon}
                     </div>
                     <div>
-                      <p className="font-mono text-[10px] text-white/25 uppercase tracking-widest mb-0.5">{item.label}</p>
+                      <p className="font-mono text-[10px] text-black/30 uppercase tracking-widest mb-0.5">{item.label}</p>
                       {item.href ? (
-                        <a href={item.href} className="text-white/60 hover:text-white transition-colors text-sm break-all">
+                        <a href={item.href} className="text-black/60 hover:text-black transition-colors text-sm break-all">
                           {item.value}
                         </a>
                       ) : (
-                        <p className="text-white/60 text-sm">{item.value}</p>
+                        <p className="text-black/60 text-sm">{item.value}</p>
                       )}
                     </div>
                   </div>
                 ))}
               </div>
 
-              {/* Divider */}
-              <div className="h-px bg-white/6" />
+              <div className="h-px bg-black/6" />
 
-              {/* Social links */}
               <div>
-                <p className="font-mono text-[10px] text-white/25 uppercase tracking-widest mb-4">Find me on</p>
+                <p className="font-mono text-[10px] text-black/25 uppercase tracking-widest mb-4">Find me on</p>
                 <div className="flex gap-3">
                   {socials.map((s) => (
                     <a key={s.label} href={s.href} target="_blank" rel="noopener noreferrer"
-                      className="flex items-center gap-2 px-4 py-2.5 rounded-sm border border-white/8 text-white/40 hover:text-white hover:border-white/25 transition-all font-mono text-xs">
+                      className="flex items-center gap-2 px-4 py-2.5 rounded-sm border border-black/10 text-black/40 hover:text-black hover:border-black/30 transition-all font-mono text-xs">
                       {s.icon}
                       <span>{s.label}</span>
                     </a>
@@ -98,14 +93,13 @@ export default function Contact() {
                 </div>
               </div>
 
-              {/* Availability badge */}
-              <div className="flex items-center gap-3 px-4 py-3 bg-white/[0.03] border border-white/8 rounded-sm">
-                <span className="w-2 h-2 rounded-full bg-white/60 animate-pulse flex-shrink-0" />
-                <span className="font-mono text-xs text-white/40">Available for new projects</span>
+              <div className="flex items-center gap-3 px-4 py-3 bg-black/[0.03] border border-black/8 rounded-sm">
+                <span className="w-2 h-2 rounded-full bg-black/50 animate-pulse flex-shrink-0" />
+                <span className="font-mono text-xs text-black/40">Available for new projects</span>
               </div>
             </div>
 
-            {/* ─── RIGHT: Contact form ─── */}
+            {/* Right: form */}
             <motion.div
               initial={{ opacity: 0, x: 30 }}
               animate={inView ? { opacity: 1, x: 0 } : {}}
@@ -113,42 +107,30 @@ export default function Contact() {
               className="lg:col-span-3"
             >
               <form onSubmit={handleSubmit} className="space-y-5">
-
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
                   <div>
                     <label className="form-label" htmlFor="name">Your Name</label>
-                    <input
-                      id="name" name="name" type="text"
-                      className="form-input" placeholder="John Doe"
-                      value={form.name} onChange={handleChange} required
-                    />
+                    <input id="name" name="name" type="text" className="form-input" placeholder="John Doe"
+                      value={form.name} onChange={handleChange} required />
                   </div>
                   <div>
                     <label className="form-label" htmlFor="email">Email Address</label>
-                    <input
-                      id="email" name="email" type="email"
-                      className="form-input" placeholder="john@example.com"
-                      value={form.email} onChange={handleChange} required
-                    />
+                    <input id="email" name="email" type="email" className="form-input" placeholder="john@example.com"
+                      value={form.email} onChange={handleChange} required />
                   </div>
                 </div>
 
                 <div>
                   <label className="form-label" htmlFor="subject">Subject</label>
-                  <input
-                    id="subject" name="subject" type="text"
-                    className="form-input" placeholder="Project Collaboration"
-                    value={form.subject} onChange={handleChange}
-                  />
+                  <input id="subject" name="subject" type="text" className="form-input" placeholder="Project Collaboration"
+                    value={form.subject} onChange={handleChange} />
                 </div>
 
                 <div>
                   <label className="form-label" htmlFor="message">Message</label>
-                  <textarea
-                    id="message" name="message" rows={6}
-                    className="form-input resize-none" placeholder="Tell me about your project or idea..."
-                    value={form.message} onChange={handleChange} required
-                  />
+                  <textarea id="message" name="message" rows={6} className="form-input resize-none"
+                    placeholder="Tell me about your project or idea..."
+                    value={form.message} onChange={handleChange} required />
                 </div>
 
                 <motion.button
@@ -159,28 +141,19 @@ export default function Contact() {
                   className="w-full btn-primary py-4 rounded-sm font-mono text-sm tracking-widest uppercase flex items-center justify-center gap-3 disabled:opacity-60 disabled:cursor-not-allowed"
                 >
                   {sent ? (
-                    <>
-                      <CheckCircle size={16} />
-                      Message Sent — Opening Mail Client
-                    </>
+                    <><CheckCircle size={16} /> Message Sent — Opening Mail Client</>
                   ) : sending ? (
                     <>
-                      <motion.div
-                        animate={{ rotate: 360 }}
-                        transition={{ repeat: Infinity, duration: 0.8, ease: 'linear' }}
-                        className="w-4 h-4 border-2 border-black/30 border-t-black rounded-full"
-                      />
+                      <motion.div animate={{ rotate: 360 }} transition={{ repeat: Infinity, duration: 0.8, ease: 'linear' }}
+                        className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full" />
                       Sending...
                     </>
                   ) : (
-                    <>
-                      <Send size={16} />
-                      Send Message
-                    </>
+                    <><Send size={16} /> Send Message</>
                   )}
                 </motion.button>
 
-                <p className="text-white/20 font-mono text-[10px] text-center tracking-wide">
+                <p className="text-black/25 font-mono text-[10px] text-center tracking-wide">
                   Submitting will open your mail client with the message pre-filled.
                 </p>
               </form>

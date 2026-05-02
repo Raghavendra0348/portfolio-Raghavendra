@@ -1,7 +1,7 @@
 import React from 'react';
 import { motion } from 'framer-motion';
 import { useInView } from 'react-intersection-observer';
-import { Github, ExternalLink, Terminal, Brain, BookOpen, ShoppingBag, Code, Calculator } from 'lucide-react';
+import { Github, ExternalLink, BookOpen, Brain, ShoppingBag, Code } from 'lucide-react';
 
 const projects = [
   {
@@ -78,7 +78,7 @@ function ProjectRow({ project, index }) {
       transition={{ duration: 0.7 }}
       className={`flex flex-col ${isReversed ? 'lg:flex-row-reverse' : 'lg:flex-row'} items-stretch gap-0`}
     >
-      {/* ── Visual panel ── */}
+      {/* Visual panel */}
       <div className="w-full lg:w-[58%] group">
         <motion.div
           whileHover={{ scale: 1.01 }}
@@ -86,14 +86,14 @@ function ProjectRow({ project, index }) {
           className="project-panel rounded-sm w-full h-64 lg:h-full min-h-[280px] flex flex-col items-center justify-center relative overflow-hidden"
         >
           {/* Large faint number */}
-          <div className="absolute top-4 right-6 font-mono text-7xl font-bold text-white/[0.04] select-none leading-none">
+          <div className="absolute top-4 right-6 font-mono text-7xl font-bold text-black/[0.04] select-none leading-none">
             {project.id}
           </div>
 
           {/* Grid lines */}
           <div className="absolute inset-0 opacity-[0.04]"
             style={{
-              backgroundImage: 'linear-gradient(rgba(255,255,255,0.6) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,0.6) 1px, transparent 1px)',
+              backgroundImage: 'linear-gradient(rgba(0,0,0,0.8) 1px, transparent 1px), linear-gradient(90deg, rgba(0,0,0,0.8) 1px, transparent 1px)',
               backgroundSize: '40px 40px'
             }}
           />
@@ -103,25 +103,25 @@ function ProjectRow({ project, index }) {
             initial={{ opacity: 0, scale: 0.8 }}
             animate={inView ? { opacity: 1, scale: 1 } : {}}
             transition={{ delay: 0.2, duration: 0.5 }}
-            className="text-white/20 group-hover:text-white/40 transition-colors duration-500 mb-6 relative z-10"
+            className="text-black/20 group-hover:text-black/40 transition-colors duration-500 mb-6 relative z-10"
           >
             {project.icon}
           </motion.div>
 
-          {/* Project title watermark */}
+          {/* Title */}
           <div className="relative z-10 text-center px-8">
-            <p className="font-mono text-xs text-white/20 uppercase tracking-[0.25em] mb-2">{project.tag}</p>
-            <h4 className="text-2xl md:text-3xl font-bold text-white/25 group-hover:text-white/40 transition-colors duration-500 tracking-tight">
+            <p className="font-mono text-xs text-black/25 uppercase tracking-[0.25em] mb-2">{project.tag}</p>
+            <h4 className="text-2xl md:text-3xl font-bold text-black/20 group-hover:text-black/35 transition-colors duration-500 tracking-tight">
               {project.title}
             </h4>
           </div>
 
           {/* Hover shine */}
-          <div className="absolute inset-0 bg-gradient-to-br from-white/[0.03] to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none" />
+          <div className="absolute inset-0 bg-gradient-to-br from-black/[0.02] to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none" />
         </motion.div>
       </div>
 
-      {/* ── Text panel ── */}
+      {/* Text panel */}
       <div className={`w-full lg:w-[42%] flex flex-col ${isReversed ? 'lg:items-start lg:text-left' : 'lg:items-end lg:text-right'} py-8 lg:py-0 ${isReversed ? 'lg:pr-0 lg:pl-10' : 'lg:pl-0 lg:pr-10'}`}>
         <motion.div
           initial={{ opacity: 0, x: isReversed ? -20 : 20 }}
@@ -129,31 +129,28 @@ function ProjectRow({ project, index }) {
           transition={{ delay: 0.15, duration: 0.6 }}
           className="flex flex-col h-full justify-center"
         >
-          <p className="font-mono text-xs text-white/40 uppercase tracking-[0.2em] mb-3">Featured Project</p>
-          <h3 className="text-2xl md:text-3xl font-bold text-white mb-1 leading-tight">{project.title}</h3>
-          <p className="text-white/40 font-mono text-sm mb-6">{project.subtitle}</p>
+          <p className="font-mono text-xs text-black/35 uppercase tracking-[0.2em] mb-3">Featured Project</p>
+          <h3 className="text-2xl md:text-3xl font-bold text-black mb-1 leading-tight">{project.title}</h3>
+          <p className="text-black/40 font-mono text-sm mb-6">{project.subtitle}</p>
 
-          {/* Description card */}
-          <div className="bw-card p-5 rounded-sm mb-6 text-left">
-            <p className="text-white/70 text-sm leading-relaxed">{project.description}</p>
+          <div className="bw-card p-5 rounded-sm mb-6 text-left shadow-sm">
+            <p className="text-black/60 text-sm leading-relaxed">{project.description}</p>
           </div>
 
-          {/* Tech */}
-          <ul className={`flex flex-wrap gap-3 font-mono text-xs text-white/45 mb-6 ${isReversed ? 'justify-start' : 'lg:justify-end'}`}>
+          <ul className={`flex flex-wrap gap-3 font-mono text-xs text-black/40 mb-6 ${isReversed ? 'justify-start' : 'lg:justify-end'}`}>
             {project.tech.map(t => <li key={t}>{t}</li>)}
           </ul>
 
-          {/* Links */}
-          <div className={`flex items-center gap-4 text-white/50 ${isReversed ? 'justify-start' : 'lg:justify-end'}`}>
+          <div className={`flex items-center gap-4 text-black/35 ${isReversed ? 'justify-start' : 'lg:justify-end'}`}>
             {project.github && (
               <a href={project.github} target="_blank" rel="noopener noreferrer"
-                className="hover:text-white transition-colors p-2 hover:bg-white/5 rounded-sm border border-transparent hover:border-white/10" title="GitHub">
+                className="hover:text-black transition-colors p-2 hover:bg-black/5 rounded-sm border border-transparent hover:border-black/10" title="GitHub">
                 <Github size={18} />
               </a>
             )}
             {project.live && (
               <a href={project.live} target="_blank" rel="noopener noreferrer"
-                className="hover:text-white transition-colors p-2 hover:bg-white/5 rounded-sm border border-transparent hover:border-white/10" title="Live Demo">
+                className="hover:text-black transition-colors p-2 hover:bg-black/5 rounded-sm border border-transparent hover:border-black/10" title="Live Demo">
                 <ExternalLink size={18} />
               </a>
             )}
@@ -168,10 +165,9 @@ export default function Projects() {
   const [ref, inView] = useInView({ triggerOnce: true, threshold: 0.05 });
 
   return (
-    <section id="projects" className="py-24 relative bg-[#080808]">
+    <section id="projects" className="py-24 relative bg-white">
       <div className="section-line absolute top-0 left-0 right-0" />
       <div className="max-w-7xl mx-auto px-6 md:px-12">
-
         <motion.div
           ref={ref}
           initial={{ opacity: 0, y: 30 }}
@@ -180,13 +176,11 @@ export default function Projects() {
           className="mb-20"
         >
           <div className="flex items-center gap-5 mb-3">
-            <span className="font-mono text-xs text-white/30 tracking-[0.2em] uppercase">04.</span>
-            <h2 className="text-3xl md:text-4xl font-bold text-white tracking-tight">Projects</h2>
-            <div className="h-px bg-white/10 flex-grow max-w-xs hidden md:block" />
+            <span className="font-mono text-xs text-black/30 tracking-[0.2em] uppercase">04.</span>
+            <h2 className="text-3xl md:text-4xl font-bold text-black tracking-tight">Projects</h2>
+            <div className="h-px bg-black/8 flex-grow max-w-xs hidden md:block" />
           </div>
-          <p className="text-white/40 font-mono text-sm ml-10 md:ml-14">
-            Things I have built
-          </p>
+          <p className="text-black/35 font-mono text-sm ml-10 md:ml-14">Things I have built</p>
         </motion.div>
 
         <div className="space-y-20 md:space-y-28">
