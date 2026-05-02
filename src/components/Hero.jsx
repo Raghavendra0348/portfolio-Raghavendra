@@ -4,105 +4,148 @@ import { ChevronDown, Github, Linkedin, Mail } from 'lucide-react';
 
 export default function Hero() {
   return (
-    <section className="relative min-h-[100dvh] flex items-center justify-center pt-20 overflow-hidden">
-      {/* Background gradients */}
-      <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[60vw] h-[60vw] bg-[#8A2BE2] rounded-full blur-[150px] opacity-10 pointer-events-none" />
-      <div className="absolute top-1/3 left-1/4 w-[40vw] h-[40vw] bg-[#00F0FF] rounded-full blur-[120px] opacity-10 pointer-events-none" />
+    <section className="relative min-h-[100dvh] flex items-center justify-center pt-20 overflow-hidden bg-black">
+      {/* Subtle grid background */}
+      <div
+        className="absolute inset-0 pointer-events-none opacity-[0.035]"
+        style={{
+          backgroundImage: `linear-gradient(rgba(255,255,255,0.5) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,0.5) 1px, transparent 1px)`,
+          backgroundSize: '60px 60px'
+        }}
+      />
+      {/* Soft radial glow */}
+      <div className="absolute inset-0 pointer-events-none" style={{
+        background: 'radial-gradient(ellipse 80% 60% at 50% 50%, rgba(255,255,255,0.03) 0%, transparent 70%)'
+      }} />
 
-      <div className="max-w-7xl mx-auto px-6 md:px-12 w-full z-10 grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
-        
+      <div className="max-w-7xl mx-auto px-6 md:px-12 w-full z-10 grid grid-cols-1 lg:grid-cols-2 gap-16 items-center">
+
+        {/* Left */}
         <div className="flex flex-col items-start pt-12 lg:pt-0">
           <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
+            initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.5 }}
-            className="font-mono text-[#00F0FF] mb-5 tracking-wide"
+            className="font-mono text-xs text-white/40 mb-6 tracking-[0.2em] uppercase"
           >
             Hi, my name is
           </motion.div>
-          
+
           <motion.h1
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
+            initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.5, delay: 0.1 }}
-            className="text-5xl md:text-7xl font-bold text-white mb-4 leading-tight tracking-tight"
+            className="text-5xl md:text-7xl font-bold text-white mb-3 leading-[1.05] tracking-tight"
           >
-            Raghavendra Arella.
+            Raghavendra<br />Arella.
           </motion.h1>
-          
+
           <motion.h2
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
+            initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.5, delay: 0.2 }}
-            className="text-4xl md:text-6xl font-bold text-[#8B949E] mb-6 leading-tight"
+            className="text-2xl md:text-3xl font-medium text-white/40 mb-8 leading-snug tracking-tight"
           >
-            I build the digital future.
+            Full Stack Developer
           </motion.h2>
-          
+
           <motion.p
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
+            initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.5, delay: 0.3 }}
-            className="text-[#8B949E] text-lg md:text-xl max-w-xl mb-10 leading-relaxed font-light"
+            className="text-white/50 text-base md:text-lg max-w-lg mb-10 leading-relaxed font-light"
           >
-            I'm a Full Stack Developer & CS student at RGUKT. I specialize in building exceptional digital experiences, scaling robust backend APIs, and translating complex problems into elegant solutions.
+            CS student at RGUKT building full-stack products — from pixel-perfect frontends
+            to scalable backend APIs. Currently shipping a video-first e-commerce platform at Bloomer.
           </motion.p>
-          
+
           <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
+            initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.5, delay: 0.4 }}
-            className="flex flex-wrap items-center gap-6"
+            className="flex flex-wrap items-center gap-4 mb-10"
           >
-            <a href="#projects" className="btn-primary px-8 py-4 rounded-sm font-mono text-sm tracking-widest uppercase">
-              Check out my work
+            <a href="#projects" className="btn-primary px-7 py-3 rounded-sm font-mono text-sm tracking-wider uppercase">
+              View Projects
             </a>
-            
-            <div className="flex items-center gap-4 text-[#8B949E]">
-              <a href="https://github.com/Raghavendra0348" target="_blank" rel="noopener noreferrer" className="hover:text-[#00F0FF] transition-colors p-2 hover:bg-[rgba(0,240,255,0.05)] rounded-full">
-                <Github size={22} />
-              </a>
-              <a href="https://linkedin.com/in/arella-raghavendra" target="_blank" rel="noopener noreferrer" className="hover:text-[#00F0FF] transition-colors p-2 hover:bg-[rgba(0,240,255,0.05)] rounded-full">
-                <Linkedin size={22} />
-              </a>
-              <a href="mailto:arellaraghavendra@gmail.com" className="hover:text-[#00F0FF] transition-colors p-2 hover:bg-[rgba(0,240,255,0.05)] rounded-full">
-                <Mail size={22} />
-              </a>
-            </div>
+            <a href="#contact" className="btn-outline px-7 py-3 rounded-sm font-mono text-sm tracking-wider uppercase">
+              Contact Me
+            </a>
+          </motion.div>
+
+          <motion.div
+            initial={{ opacity: 0 }} animate={{ opacity: 1 }}
+            transition={{ delay: 0.6 }}
+            className="flex items-center gap-5 text-white/40"
+          >
+            <a href="https://github.com/Raghavendra0348" target="_blank" rel="noopener noreferrer"
+              className="hover:text-white transition-colors p-1.5 hover:bg-white/5 rounded-full">
+              <Github size={20} />
+            </a>
+            <a href="https://linkedin.com/in/arella-raghavendra" target="_blank" rel="noopener noreferrer"
+              className="hover:text-white transition-colors p-1.5 hover:bg-white/5 rounded-full">
+              <Linkedin size={20} />
+            </a>
+            <a href="mailto:arellaraghavendra@gmail.com"
+              className="hover:text-white transition-colors p-1.5 hover:bg-white/5 rounded-full">
+              <Mail size={20} />
+            </a>
+            <div className="h-px w-16 bg-white/10 ml-2" />
+            <span className="font-mono text-xs tracking-widest text-white/20">Andhra Pradesh, IN</span>
           </motion.div>
         </div>
 
+        {/* Right — B&W photo with editorial frame */}
         <motion.div
-          initial={{ opacity: 0, scale: 0.9 }}
-          animate={{ opacity: 1, scale: 1 }}
-          transition={{ duration: 0.7, delay: 0.3 }}
-          className="relative hidden lg:block mx-auto w-full max-w-[450px]"
+          initial={{ opacity: 0, x: 40 }}
+          animate={{ opacity: 1, x: 0 }}
+          transition={{ duration: 0.8, delay: 0.3 }}
+          className="relative hidden lg:flex items-center justify-center"
         >
-          <div className="relative rounded-sm overflow-hidden border border-[#00F0FF]/30 aspect-[4/5] glow-box group">
-            <div className="absolute inset-0 bg-[#00F0FF]/20 mix-blend-multiply group-hover:bg-transparent transition-colors duration-500 z-10" />
-            <img 
-              src="/raghava1.jpeg" 
-              alt="Raghavendra Arella" 
-              className="w-full h-full object-cover filter grayscale hover:grayscale-0 transition-all duration-500 scale-105 group-hover:scale-100"
-            />
-          </div>
-          <div className="absolute -inset-4 border border-[#8A2BE2]/40 rounded-sm -z-10 translate-x-4 translate-y-4 group-hover:translate-x-2 group-hover:translate-y-2 transition-transform duration-500" />
-        </motion.div>
+          {/* Outer decorative border */}
+          <div className="absolute -inset-3 border border-white/5 rounded-sm" />
+          <div className="absolute -inset-6 border border-white/[0.03] rounded-sm" />
 
+          {/* Photo container */}
+          <div className="relative w-full max-w-[400px] aspect-[3/4] overflow-hidden rounded-sm border border-white/10 group">
+            {/* Pure B&W + high contrast overlay */}
+            <img
+              src="/raghava1.jpeg"
+              alt="Raghavendra Arella"
+              className="w-full h-full object-cover scale-105 group-hover:scale-100 transition-transform duration-700"
+              style={{ filter: 'grayscale(100%) contrast(1.15) brightness(0.95)' }}
+            />
+            {/* Subtle white gradient at bottom */}
+            <div className="absolute bottom-0 left-0 right-0 h-1/3 bg-gradient-to-t from-black/60 to-transparent" />
+            {/* Corner tag */}
+            <div className="absolute top-4 right-4 font-mono text-[10px] text-white/30 tracking-widest uppercase">
+              Full Stack Dev
+            </div>
+          </div>
+
+          {/* Floating stat chips */}
+          <motion.div
+            initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }}
+            transition={{ delay: 0.8 }}
+            className="absolute -right-4 top-1/4 bg-black border border-white/10 px-4 py-2.5 rounded-sm"
+          >
+            <p className="font-mono text-[10px] text-white/40 uppercase tracking-widest mb-0.5">CGPA</p>
+            <p className="font-bold text-white text-lg leading-none">8.75</p>
+          </motion.div>
+          <motion.div
+            initial={{ opacity: 0, x: -20 }} animate={{ opacity: 1, x: 0 }}
+            transition={{ delay: 1 }}
+            className="absolute -left-4 bottom-1/4 bg-black border border-white/10 px-4 py-2.5 rounded-sm"
+          >
+            <p className="font-mono text-[10px] text-white/40 uppercase tracking-widest mb-0.5">Projects</p>
+            <p className="font-bold text-white text-lg leading-none">5+</p>
+          </motion.div>
+        </motion.div>
       </div>
 
-      <motion.div 
-        initial={{ opacity: 0 }}
-        animate={{ opacity: 1 }}
-        transition={{ delay: 1, duration: 1 }}
-        className="absolute bottom-10 left-1/2 -translate-x-1/2 flex flex-col items-center gap-2 text-[#8B949E]"
+      {/* Scroll cue */}
+      <motion.div
+        initial={{ opacity: 0 }} animate={{ opacity: 1 }}
+        transition={{ delay: 1.2, duration: 1 }}
+        className="absolute bottom-8 left-1/2 -translate-x-1/2 flex flex-col items-center gap-2"
       >
-        <span className="font-mono text-xs uppercase tracking-widest text-[#00F0FF]/70">Scroll</span>
-        <motion.div
-          animate={{ y: [0, 10, 0] }}
-          transition={{ repeat: Infinity, duration: 2 }}
-        >
-          <ChevronDown size={20} className="text-[#00F0FF]/70" />
+        <motion.div animate={{ y: [0, 8, 0] }} transition={{ repeat: Infinity, duration: 2 }}>
+          <ChevronDown size={18} className="text-white/20" />
         </motion.div>
       </motion.div>
     </section>

@@ -3,55 +3,74 @@ import { motion } from 'framer-motion';
 import { useInView } from 'react-intersection-observer';
 
 export default function Experience() {
-  const [ref, inView] = useInView({ triggerOnce: true, threshold: 0.2 });
+  const [ref, inView] = useInView({ triggerOnce: true, threshold: 0.15 });
 
   return (
-    <section id="experience" className="py-24 relative">
+    <section id="experience" className="py-24 relative bg-black">
+      <div className="section-line absolute top-0 left-0 right-0" />
       <div className="max-w-4xl mx-auto px-6 md:px-12">
         <motion.div
           ref={ref}
-          initial={{ opacity: 0, y: 50 }}
-          animate={inView ? { opacity: 1, y: 0 } : { opacity: 0, y: 50 }}
-          transition={{ duration: 0.6 }}
+          initial={{ opacity: 0, y: 40 }}
+          animate={inView ? { opacity: 1, y: 0 } : {}}
+          transition={{ duration: 0.7 }}
         >
-          <div className="flex items-center gap-4 mb-16">
-            <h2 className="text-3xl md:text-4xl font-bold text-white flex items-center gap-3">
-              <span className="text-[#8A2BE2] font-mono text-2xl font-normal">03.</span>
-              Where I've Worked
-            </h2>
-            <div className="h-[1px] bg-[#1e293b] flex-grow" />
+          <div className="flex items-center gap-5 mb-16">
+            <span className="font-mono text-xs text-white/25 tracking-[0.2em] uppercase">03.</span>
+            <h2 className="text-3xl md:text-4xl font-bold text-white tracking-tight">Where I've Worked</h2>
+            <div className="h-px bg-white/8 flex-grow hidden md:block" />
           </div>
 
-          <div className="relative border-l border-[#1e293b] ml-4 md:ml-0 md:pl-8 py-4">
-            
-            <div className="absolute w-3 h-3 bg-[#00F0FF] rounded-full -left-[6px] md:-left-[44px] top-6 shadow-[0_0_10px_#00F0FF]" />
+          <div className="relative">
+            {/* Timeline line */}
+            <div className="absolute left-0 top-0 bottom-0 w-px bg-white/8" />
 
-            <div className="pl-8 md:pl-0">
-              <h3 className="text-2xl font-bold text-white mb-1">
-                Full Stack Developer <span className="text-[#00F0FF]">@ Bloomer</span>
-              </h3>
-              <p className="text-[#8B949E] font-mono text-sm mb-6">2025 — Present | Live project</p>
-              
-              <ul className="space-y-4 text-[#E2E8F0] text-base leading-relaxed">
-                <li className="flex gap-3">
-                  <span className="text-[#8A2BE2] font-mono mt-1">▹</span>
-                  <span>Developing a video-first e-commerce platform using Node.js, Express.js, React.js, and Firestore.</span>
-                </li>
-                <li className="flex gap-3">
-                  <span className="text-[#8A2BE2] font-mono mt-1">▹</span>
-                  <span>Designing scalable backend APIs and real-time data handling systems to support high concurrency.</span>
-                </li>
-                <li className="flex gap-3">
-                  <span className="text-[#8A2BE2] font-mono mt-1">▹</span>
-                  <span>Building interactive UI for seamless watch, swipe, and shop experiences, optimizing for performance.</span>
-                </li>
-                <li className="flex gap-3">
-                  <span className="text-[#8A2BE2] font-mono mt-1">▹</span>
-                  <span>Contributing to a next-generation shopping platform focused on creator-driven commerce.</span>
-                </li>
+            <div className="pl-10 relative">
+              {/* Dot */}
+              <div className="absolute left-[-4px] top-1.5 w-2.5 h-2.5 rounded-full border-2 border-white/60 bg-black" />
+
+              {/* Header */}
+              <div className="flex flex-wrap items-baseline gap-x-3 gap-y-1 mb-1">
+                <h3 className="text-xl font-bold text-white">Full Stack Developer</h3>
+                <span className="text-white/40 font-mono text-sm">@ Bloomer</span>
+              </div>
+              <div className="flex flex-wrap items-center gap-4 mb-7">
+                <p className="text-white/30 font-mono text-xs tracking-widest uppercase">2025 — Present</p>
+                <span className="inline-flex items-center gap-1.5 font-mono text-[10px] text-white/40 bg-white/[0.04] border border-white/8 px-2 py-0.5 rounded-sm">
+                  <span className="w-1.5 h-1.5 rounded-full bg-white/50 animate-pulse" />
+                  Live
+                </span>
+              </div>
+
+              <ul className="space-y-4">
+                {[
+                  'Developing a video-first e-commerce platform using Node.js, Express.js, React.js, and Firestore.',
+                  'Designing scalable backend APIs and real-time data handling systems to support high concurrency.',
+                  'Building interactive UI for seamless watch, swipe, and shop experiences, optimizing for performance.',
+                  'Contributing to a next-generation shopping platform focused on creator-driven commerce.',
+                ].map((item, i) => (
+                  <motion.li
+                    key={i}
+                    initial={{ opacity: 0, x: -10 }}
+                    animate={inView ? { opacity: 1, x: 0 } : {}}
+                    transition={{ delay: 0.1 + i * 0.08, duration: 0.5 }}
+                    className="flex gap-3 text-white/50 text-base leading-relaxed"
+                  >
+                    <span className="text-white/20 font-mono mt-1 flex-shrink-0">▹</span>
+                    <span>{item}</span>
+                  </motion.li>
+                ))}
               </ul>
+
+              {/* Tech stack used */}
+              <div className="flex flex-wrap gap-2 mt-7">
+                {['Node.js', 'Express.js', 'React.js', 'Firestore', 'REST APIs'].map(t => (
+                  <span key={t} className="font-mono text-[11px] text-white/30 bg-white/[0.03] border border-white/8 px-2.5 py-1 rounded-sm">
+                    {t}
+                  </span>
+                ))}
+              </div>
             </div>
-            
           </div>
         </motion.div>
       </div>
