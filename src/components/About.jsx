@@ -37,17 +37,6 @@ export default function About() {
                 e-commerce platform. Off-screen: badminton, cricket, Sudoku, and music.
               </p>
 
-              <div className="pt-4 border-t border-[#000000]/8">
-                <p className="font-mono text-xs text-[#000000]/35 uppercase tracking-widest mb-4">Recent Tech</p>
-                <ul className="grid grid-cols-2 gap-y-2 gap-x-4 font-mono text-sm">
-                  {['JavaScript (ES6+)', 'React', 'Node.js', 'Express.js', 'Python', 'Django'].map(tech => (
-                    <li key={tech} className="flex items-center gap-2 text-[#000000]/55">
-                      <span className="w-1 h-1 bg-[#000000] rounded-full" />
-                      {tech}
-                    </li>
-                  ))}
-                </ul>
-              </div>
             </div>
 
             <motion.div
