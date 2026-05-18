@@ -22,13 +22,13 @@ export default function Navbar() {
 
   return (
     <>
-      {/* ── Outer strip: shifts top + padding smoothly ── */}
+      {/* ── Outer strip: top of page = flush, scrolled = floating with side padding ── */}
       <motion.div
         className="fixed left-0 right-0 z-40 flex justify-center pointer-events-none"
         animate={{
-          top:          scrolled ? 0  : 20,
-          paddingLeft:  scrolled ? 0  : 16,
-          paddingRight: scrolled ? 0  : 16,
+          top:          scrolled ? 16 : 0,
+          paddingLeft:  scrolled ? 20 : 0,
+          paddingRight: scrolled ? 20 : 0,
         }}
         transition={{ duration: 0.5, ease: [0.22, 1, 0.36, 1] }}
       >
@@ -38,28 +38,29 @@ export default function Navbar() {
           animate={{
             y:             0,
             opacity:       1,
-            borderRadius:  scrolled ? 0     : 9999,
-            paddingTop:    scrolled ? 16    : 10,
-            paddingBottom: scrolled ? 16    : 10,
-            paddingLeft:   scrolled ? 40    : 24,
-            paddingRight:  scrolled ? 40    : 24,
+            /* flat bar at top → rounded hanging pill on scroll */
+            borderRadius:  scrolled ? 9999 : 0,
+            paddingTop:    scrolled ? 10   : 16,
+            paddingBottom: scrolled ? 10   : 16,
+            paddingLeft:   scrolled ? 24   : 40,
+            paddingRight:  scrolled ? 24   : 40,
             backgroundColor: scrolled
-              ? 'rgba(255,255,255,0.97)'
-              : 'rgba(255,255,255,0.82)',
+              ? 'rgba(255,255,255,0.88)'
+              : 'rgba(255,255,255,0.97)',
             boxShadow: scrolled
-              ? '0 1px 0 rgba(0,0,0,0.09)'
-              : '0 4px 24px rgba(0,0,0,0.10)',
+              ? '0 8px 32px rgba(0,0,0,0.13), 0 1.5px 6px rgba(0,0,0,0.07)'
+              : '0 1px 0 rgba(0,0,0,0.09)',
           }}
           transition={{ duration: 0.5, ease: [0.22, 1, 0.36, 1] }}
           /* maxWidth via style + CSS transition — avoids "none" interpolation issue */
           style={{
-            maxWidth:             scrolled ? '100%' : 740,
+            maxWidth:             scrolled ? 740 : '100%',
             width:                '100%',
-            backdropFilter:       'blur(18px)',
-            WebkitBackdropFilter: 'blur(18px)',
+            backdropFilter:       scrolled ? 'blur(18px)' : 'blur(0px)',
+            WebkitBackdropFilter: scrolled ? 'blur(18px)' : 'blur(0px)',
             border:               scrolled
-              ? '0px solid transparent'
-              : '1.5px solid rgba(0,0,0,0.08)',
+              ? '1.5px solid rgba(0,0,0,0.08)'
+              : '0px solid transparent',
             transition: 'max-width 0.5s cubic-bezier(0.22,1,0.36,1)',
           }}
           className="pointer-events-auto flex items-center justify-between gap-6"

@@ -123,7 +123,7 @@ export default function Hero() {
             animate={{ y: [0, -12, 0] }}
             transition={{ duration: 5, repeat: Infinity, ease: 'easeInOut' }}
             className="w-full max-w-[500px] h-auto select-none"
-            style={{ filter: 'invert(1)', mixBlendMode: 'multiply' }}
+            style={{  mixBlendMode: 'multiply' }}
             draggable={false}
           />
         </motion.div>

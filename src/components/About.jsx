@@ -47,9 +47,9 @@ export default function About() {
               <div className="relative group">
                 <div className="absolute -inset-2 border border-[#000000]/8 rounded-sm transition-all duration-500 group-hover:-inset-3" />
                 <div className="relative overflow-hidden rounded-sm border border-[#000000]/12 aspect-square">
-                  <img src="/raghava.webp" alt="Raghavendra Arella"
+                  <img src="/raghava.jpeg" alt="Raghavendra Arella"
                     className="w-full h-full object-cover scale-105 group-hover:scale-100 transition-transform duration-700"
-                    style={{ filter: 'grayscale(100%) contrast(1.1)' }}
+                 
                   />
                 </div>
                 <div className="mt-3 text-center font-mono text-[10px] text-[#000000]/30 tracking-widest uppercase">
