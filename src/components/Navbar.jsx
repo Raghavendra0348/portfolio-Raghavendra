@@ -1,11 +1,12 @@
 import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Menu, X } from 'lucide-react';
+import LiquidButton, { LiquidNavLink } from './ui/liquid-button';
 
 const navLinks = [
   { name: 'About',      href: '#about'      },
   { name: 'Skills',     href: '#skills'     },
-  { name: 'Experience', href: '#experience' },
+  // { name: 'Experience', href: '#experience' },
   { name: 'Projects',   href: '#projects'   },
   { name: 'Contact',    href: '#contact'    },
 ];
@@ -72,20 +73,20 @@ export default function Navbar() {
           </a>
 
           {/* Desktop links */}
-          <nav className="hidden md:flex items-center gap-1">
+          <nav className="hidden md:flex items-center gap-0.5">
             {navLinks.map((link) => (
-              <a key={link.name} href={link.href}
-                className="text-[13px] font-medium text-black/50 hover:text-black transition-colors px-3 py-1.5 rounded-full hover:bg-black/5 font-mono">
+              <LiquidNavLink key={link.name} href={link.href}>
                 {link.name}
-              </a>
+              </LiquidNavLink>
             ))}
           </nav>
 
-          {/* Resume pill */}
-          <a href="/assets/resume.pdf" target="_blank" rel="noopener noreferrer"
-            className="hidden md:inline-flex items-center px-4 py-2 rounded-full bg-black text-white text-[13px] font-mono font-medium tracking-wide hover:bg-black/75 transition-colors shrink-0">
-            Resume
-          </a>
+          {/* Resume pill — liquid button */}
+          <span className="hidden md:inline-flex shrink-0">
+            <LiquidButton href="/assets/resume.pdf" className="w-28">
+              Resume
+            </LiquidButton>
+          </span>
 
           {/* Mobile toggle */}
           <button className="md:hidden text-black p-1 rounded-full hover:bg-black/6"
@@ -105,19 +106,22 @@ export default function Navbar() {
             transition={{ duration: 0.2 }}
             className="fixed top-[72px] left-4 right-4 z-40 bg-white/95 backdrop-blur-xl border border-black/8 rounded-2xl shadow-[0_8px_32px_rgba(0,0,0,0.12)] overflow-hidden"
           >
-            <div className="flex flex-col p-3 gap-1">
+            <div className="flex flex-col p-3 gap-0.5">
               {navLinks.map((link) => (
-                <a key={link.name} href={link.href}
+                <LiquidNavLink
+                  key={link.name}
+                  href={link.href}
                   onClick={() => setMobileMenuOpen(false)}
-                  className="text-sm font-medium text-black/60 hover:text-black hover:bg-black/5 transition-colors px-4 py-3 rounded-xl font-mono">
+                >
                   {link.name}
-                </a>
+                </LiquidNavLink>
               ))}
               <div className="h-px bg-black/8 my-1" />
-              <a href="/assets/resume.pdf" target="_blank" rel="noopener noreferrer"
-                className="text-sm font-mono font-medium text-white bg-black hover:bg-black/80 transition-colors px-4 py-3 rounded-xl text-center">
-                Resume
-              </a>
+              <div className="flex justify-center py-1">
+                <LiquidButton href="/assets/resume.pdf" className="w-36">
+                  Resume
+                </LiquidButton>
+              </div>
             </div>
           </motion.div>
         )}

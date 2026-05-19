@@ -6,7 +6,6 @@ import About from './components/About';
 import Skills from './components/Skills';
 // import Experience from './components/Experience';
 import Projects from './components/Projects';
-import ProjectsShowcase from './components/ProjectsShowcase';
 import Contact from './components/Contact';
 import Footer from './components/Footer';
 import IntroScreen from './components/IntroScreen';
@@ -39,7 +38,6 @@ function App() {
               <Hero />
               <About />
               <Skills />
-              <ProjectsShowcase />
               {/* <Experience /> */}
               <Projects />
               <Contact />

@@ -1,31 +1,57 @@
 import React, { useState } from 'react';
 import { motion } from 'framer-motion';
 import { useInView } from 'react-intersection-observer';
-import { Github, Linkedin, Mail, Phone, MapPin, Send, CheckCircle } from 'lucide-react';
+import { Github, Linkedin, Mail, Phone, MapPin, Send, CheckCircle, AlertCircle } from 'lucide-react';
+import emailjs from '@emailjs/browser';
+// import { KnotAnimation } from './ui/knot-animation';
+
+// ─── EmailJS config ───────────────────────────────────────────────────────────
+// 1. Sign up free at https://www.emailjs.com/
+// 2. Add an Email Service (Gmail, Outlook…)
+// 3. Create a template with variables: {{from_name}}, {{from_email}}, {{subject}}, {{message}}
+// 4. Replace the three strings below with your real IDs from your EmailJS dashboard
+const EJ_SERVICE  = 'YOUR_SERVICE_ID';   // e.g. 'service_abc123'
+const EJ_TEMPLATE = 'YOUR_TEMPLATE_ID'; // e.g. 'template_xyz456'
+const EJ_KEY      = 'YOUR_PUBLIC_KEY';  // e.g. 'aBcDeFgHiJkL'
 
 export default function Contact() {
   const [ref, inView] = useInView({ triggerOnce: true, threshold: 0.1 });
-  const [form, setForm] = useState({ name: '', email: '', subject: '', message: '' });
-  const [sent, setSent] = useState(false);
+  const [form, setForm]   = useState({ name: '', email: '', subject: '', message: '' });
+  const [sent, setSent]   = useState(false);
   const [sending, setSending] = useState(false);
+  const [error, setError] = useState('');
 
   const handleChange = (e) => setForm(prev => ({ ...prev, [e.target.name]: e.target.value }));
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    setError('');
     setSending(true);
-    await new Promise(r => setTimeout(r, 800));
-    const subject = encodeURIComponent(form.subject || 'Portfolio Contact');
-    const body = encodeURIComponent(`Name: ${form.name}\nEmail: ${form.email}\n\n${form.message}`);
-    window.open(`mailto:arellaraghavendra@gmail.com?subject=${subject}&body=${body}`);
-    setSending(false);
-    setSent(true);
-    setTimeout(() => { setSent(false); setForm({ name: '', email: '', subject: '', message: '' }); }, 4000);
+
+    const templateParams = {
+      from_name:  form.name,
+      from_email: form.email,
+      subject:    form.subject || 'Portfolio Contact',
+      message:    form.message,
+      to_email:   'arellaraghavendra@gmail.com',
+    };
+
+    try {
+      await emailjs.send(EJ_SERVICE, EJ_TEMPLATE, templateParams, EJ_KEY);
+      setSent(true);
+      setForm({ name: '', email: '', subject: '', message: '' });
+      setTimeout(() => setSent(false), 5000);
+    } catch (err) {
+      console.error('EmailJS error:', err);
+      setError('Failed to send. Please email me directly at arellaraghavendra@gmail.com');
+    } finally {
+      setSending(false);
+    }
   };
 
   const contactItems = [
     { icon: <Mail size={16} />, label: 'Email', value: 'arellaraghavendra@gmail.com', href: 'mailto:arellaraghavendra@gmail.com' },
-    { icon: <Phone size={16} />, label: 'Phone', value: '+91 7674919477', href: 'tel:+917674919477' },
+    // { icon: <Phone size={16} />, label: 'Phone', value: '+91 7674919477', href: 'tel:+917674919477' },
     { icon: <MapPin size={16} />, label: 'Location', value: 'Andhra Pradesh, India', href: null },
   ];
 
@@ -110,12 +136,12 @@ export default function Contact() {
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
                   <div>
                     <label className="form-label" htmlFor="name">Your Name</label>
-                    <input id="name" name="name" type="text" className="form-input" placeholder="John Doe"
+                    <input id="name" name="name" type="text" className="form-input" placeholder="Enter Your Name"
                       value={form.name} onChange={handleChange} required />
                   </div>
                   <div>
                     <label className="form-label" htmlFor="email">Email Address</label>
-                    <input id="email" name="email" type="email" className="form-input" placeholder="john@example.com"
+                    <input id="email" name="email" type="email" className="form-input" placeholder="mail@example.com"
                       value={form.email} onChange={handleChange} required />
                   </div>
                 </div>
@@ -141,7 +167,7 @@ export default function Contact() {
                   className="w-full btn-primary py-4 rounded-sm font-mono text-sm tracking-widest uppercase flex items-center justify-center gap-3 disabled:opacity-60 disabled:cursor-not-allowed"
                 >
                   {sent ? (
-                    <><CheckCircle size={16} /> Message Sent — Opening Mail Client</>
+                    <><CheckCircle size={16} /> Message Sent! I'll get back to you soon.</>
                   ) : sending ? (
                     <>
                       <motion.div animate={{ rotate: 360 }} transition={{ repeat: Infinity, duration: 0.8, ease: 'linear' }}
@@ -153,10 +179,18 @@ export default function Contact() {
                   )}
                 </motion.button>
 
+                {error && (
+                  <div className="flex items-start gap-2 p-3 rounded bg-red-50 border border-red-200">
+                    <AlertCircle size={14} className="text-red-500 mt-0.5 shrink-0" />
+                    <p className="text-red-600 font-mono text-[11px]">{error}</p>
+                  </div>
+                )}
+
                 <p className="text-black/25 font-mono text-[10px] text-center tracking-wide">
-                  Submitting will open your mail client with the message pre-filled.
+                  Your message is sent directly to my inbox — no mail client needed.
                 </p>
               </form>
+
             </motion.div>
           </div>
         </motion.div>

@@ -33,23 +33,23 @@ const row1 = [
   { label: 'Node.js',    Icon: SiNodedotjs,  accent: '#5FA04E' },
   { label: 'Express.js', Icon: SiExpress,    accent: '#888888' },
   { label: 'HTML / CSS', Icon: SiHtml5,      accent: '#E34F26' },
-  { label: 'Django',     Icon: SiDjango,     accent: '#0C4B33' },
+  // { label: 'Django',     Icon: SiDjango,     accent: '#0C4B33' },
   { label: 'Java',       Icon: FaJava,       accent: '#F89820' },
   { label: 'SQL',        Icon: FaDatabase,   accent: '#336791' },
-  { label: 'C Language', Icon: TbBrandCpp,   accent: '#00599C' },
+  // { label: 'C Language', Icon: TbBrandCpp,   accent: '#00599C' },
 ];
 
 const row2 = [
   { label: 'Firebase',    Icon: SiFirebase,      accent: '#FFCA28' },
   { label: 'MySQL',       Icon: SiMysql,         accent: '#4479A1' },
-  { label: 'SQLite',      Icon: SiSqlite,        accent: '#003B57' },
+  // { label: 'SQLite',      Icon: SiSqlite,        accent: '#003B57' },
   { label: 'REST APIs',   Icon: FaServer,        accent: '#6D4AFF' },
   { label: 'JWT Auth',    Icon: SiJsonwebtokens, accent: '#D63AFF' },
   { label: 'Git & GitHub',Icon: SiGit,           accent: '#F05032' },
   { label: 'scikit-learn',Icon: SiScikitlearn,   accent: '#F7931E' },
   { label: 'Pandas',      Icon: SiPandas,        accent: '#150458' },
-  { label: 'PostgreSQL',  Icon: SiPostgresql,    accent: '#336791' },
-  { label: 'DRF',         Icon: SiDjango,        accent: '#A30000' },
+  // { label: 'PostgreSQL',  Icon: SiPostgresql,    accent: '#336791' },
+  // { label: 'DRF',         Icon: SiDjango,        accent: '#A30000' },
 ];
 
 /* ── Single skill card ────────────────────────────────────────── */

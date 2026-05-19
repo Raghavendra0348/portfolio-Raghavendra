@@ -17,7 +17,7 @@ export default function Hero() {
     { icon: <Github size={18} />,   href: 'https://github.com/Raghavendra0348',           label: 'GitHub'   },
     { icon: <Linkedin size={18} />, href: 'https://linkedin.com/in/arella-raghavendra',   label: 'LinkedIn' },
     { icon: <Mail size={18} />,     href: 'mailto:arellaraghavendra@gmail.com',            label: 'Email'    },
-    { icon: <Twitter size={18} />,  href: '#',                                             label: 'Twitter'  },
+    // { icon: <Twitter size={18} />,  href: '#',                                             label: 'Twitter'  },
   ];
 
   return (
