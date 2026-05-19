@@ -42,12 +42,24 @@ export default function Contact() {
       setForm({ name: '', email: '', subject: '', message: '' });
       setTimeout(() => setSent(false), 5000);
     } catch (err) {
-      console.error('EmailJS error:', err);
-      setError('Failed to send. Please email me directly at arellaraghavendra@gmail.com');
+      // EmailJS failed — fallback to mailto so the form still works
+      console.error('EmailJS error:', err?.text || err);
+      const sub  = encodeURIComponent(form.subject || 'Portfolio Contact');
+      const body = encodeURIComponent(
+        `Name: ${form.name}\nEmail: ${form.email}\n\n${form.message}`
+      );
+      window.open(
+        `mailto:arellaraghavendra@gmail.com?subject=${sub}&body=${body}`,
+        '_blank'
+      );
+      setSent(true);
+      setForm({ name: '', email: '', subject: '', message: '' });
+      setTimeout(() => setSent(false), 5000);
     } finally {
       setSending(false);
     }
   };
+
 
   const contactItems = [
     { icon: <Mail size={16} />, label: 'Email', value: 'arellaraghavendra@gmail.com', href: 'mailto:arellaraghavendra@gmail.com' },
