@@ -10,9 +10,9 @@ import emailjs from '@emailjs/browser';
 // 2. Add an Email Service (Gmail, Outlook…)
 // 3. Create a template with variables: {{from_name}}, {{from_email}}, {{subject}}, {{message}}
 // 4. Replace the three strings below with your real IDs from your EmailJS dashboard
-const EJ_SERVICE  = 'YOUR_SERVICE_ID';   // e.g. 'service_abc123'
-const EJ_TEMPLATE = 'YOUR_TEMPLATE_ID'; // e.g. 'template_xyz456'
-const EJ_KEY      = 'YOUR_PUBLIC_KEY';  // e.g. 'aBcDeFgHiJkL'
+const EJ_SERVICE  = 'service_5ew6wfg';   // e.g. 'service_abc123'
+const EJ_TEMPLATE = 'template_nrdig9m'; // e.g. 'template_xyz456'
+const EJ_KEY      = 'b58DTevOv2na16Eu8';  // e.g. 'aBcDeFgHiJkL'
 
 export default function Contact() {
   const [ref, inView] = useInView({ triggerOnce: true, threshold: 0.1 });
