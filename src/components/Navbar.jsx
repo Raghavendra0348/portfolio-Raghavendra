@@ -83,7 +83,7 @@ export default function Navbar() {
 
           {/* Resume pill — liquid button */}
           <span className="hidden md:inline-flex shrink-0">
-            <LiquidButton href="/assets/resume.pdf" className="w-28">
+            <LiquidButton href="/resume.pdf" download="Raghavendra_Resume.pdf" className="w-28">
               Resume
             </LiquidButton>
           </span>
@@ -118,7 +118,7 @@ export default function Navbar() {
               ))}
               <div className="h-px bg-black/8 my-1" />
               <div className="flex justify-center py-1">
-                <LiquidButton href="/assets/resume.pdf" className="w-36">
+                <LiquidButton href="/resume.pdf" download="Raghavendra_Resume.pdf" className="w-36">
                   Resume
                 </LiquidButton>
               </div>

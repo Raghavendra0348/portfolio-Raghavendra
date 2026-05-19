@@ -119,7 +119,7 @@ function LiquidLayers({ uid, isHovered }) {
 }
 
 // ── LiquidButton — solid dark CTA (Resume) ────────────────────────────────────
-export default function LiquidButton({ href, onClick, children, className = '' }) {
+export default function LiquidButton({ href, download, onClick, children, className = '' }) {
   const [hovered, setHovered] = useState(false);
   const uid = useId().replace(/:/g, '');
 
@@ -154,7 +154,7 @@ export default function LiquidButton({ href, onClick, children, className = '' }
     </span>
   );
 
-  if (href) return <a href={href} target="_blank" rel="noopener noreferrer" style={{ display:'inline-flex', textDecoration:'none' }}>{surface}</a>;
+  if (href) return <a href={href} download={download || undefined} target={download ? '_self' : '_blank'} rel="noopener noreferrer" style={{ display:'inline-flex', textDecoration:'none' }}>{surface}</a>;
   return <button onClick={onClick} style={{ background:'none', border:'none', padding:0, cursor:'pointer', display:'inline-flex' }}>{surface}</button>;
 }
 
