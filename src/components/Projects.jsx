@@ -99,12 +99,12 @@ function ProjectContent({ p }) {
       <hr style={{ border: 'none', borderTop: `1px solid ${border}` }} />
 
       {/* ── middle: title + image ── */}
-      <div className="flex flex-col md:flex-row items-start md:items-end gap-8 flex-1">
+      <div className="flex flex-col md:flex-row items-start md:items-end gap-6 flex-1">
         <div className="flex-1">
           <h2
             className="font-bold leading-[0.85] uppercase tracking-tight"
             style={{
-              fontSize: 'clamp(3rem, 9vw, 10rem)',
+              fontSize: 'clamp(2.6rem, 9vw, 10rem)',
               color: p.color,
             }}
           >
@@ -117,9 +117,9 @@ function ProjectContent({ p }) {
 
         {/* project image */}
         <div
-          className="shrink-0 rounded-2xl overflow-hidden"
+          className="w-full shrink-0 rounded-2xl overflow-hidden"
           style={{
-            width: 'clamp(280px, 32vw, 440px)',
+            maxWidth: 'min(100%, clamp(240px, 32vw, 600px))',
             aspectRatio: '16/10',
             border: `1px solid ${border}`,
           }}
