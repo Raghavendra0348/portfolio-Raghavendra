@@ -24,7 +24,7 @@ export function FlowSection({ className, style = {}, children, 'aria-label': ari
       <div
         data-flow-inner
         className={cx(
-          'flow-art-container relative flex min-h-screen w-full flex-col justify-between gap-6 px-[4vw] pt-[clamp(4.5rem,8vw,6rem)] pb-[4vw]',
+          'flow-art-container relative flex min-h-screen w-full flex-col justify-start md:justify-between gap-6 md:gap-0 px-[4vw] pt-[clamp(4.5rem,8vw,6rem)] pb-[4vw]',
           'will-change-transform',
         )}
         style={{ transformOrigin: 'bottom left', ...style }}

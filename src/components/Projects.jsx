@@ -96,10 +96,10 @@ function ProjectContent({ p }) {
       </div>
 
       {/* ── divider ── */}
-      <hr style={{ border: 'none', borderTop: `1px solid ${border}` }} />
+      <hr className="my-4" style={{ border: 'none', borderTop: `1px solid ${border}` }} />
 
       {/* ── middle: title + image ── */}
-      <div className="flex flex-col md:flex-row items-start md:items-end gap-6 flex-1">
+      <div className="flex flex-col md:flex-row items-start md:items-end gap-4 md:flex-1">
         <div className="flex-1">
           <h2
             className="font-bold leading-[0.85] uppercase tracking-tight"
@@ -119,7 +119,7 @@ function ProjectContent({ p }) {
         <div
           className="w-full shrink-0 rounded-2xl overflow-hidden"
           style={{
-            maxWidth: 'min(100%, clamp(240px, 32vw, 600px))',
+            maxWidth: 'min(100%, clamp(280px, 34vw, 600px))',
             aspectRatio: '16/10',
             border: `1px solid ${border}`,
           }}
@@ -133,10 +133,10 @@ function ProjectContent({ p }) {
       </div>
 
       {/* ── divider ── */}
-      <hr style={{ border: 'none', borderTop: `1px solid ${border}` }} />
+      <hr className="my-4" style={{ border: 'none', borderTop: `1px solid ${border}` }} />
 
       {/* ── bottom row: description + tech + links ── */}
-      <div className="flex flex-col md:flex-row gap-8 md:items-end">
+      <div className="flex flex-col md:flex-row gap-6 md:gap-8 md:items-end pb-8 md:pb-0">
         {/* description */}
         <p
           className="flex-1 text-[clamp(0.9rem,1.4vw,1.05rem)] leading-relaxed"

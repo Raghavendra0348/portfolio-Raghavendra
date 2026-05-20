@@ -96,21 +96,13 @@ code, .font-mono   { font-family: 'JetBrains Mono', monospace; }
   align-items: center;
   justify-content: flex-end;
   gap: .55rem;
-  padding: 1.4rem 1.6rem 1.1rem;
-  width: 110px;
-  min-width: 110px;
-  background: #fff;
-  border: 1.5px solid rgba(0,0,0,0.09);
-  border-radius: 14px;
+  padding: 1rem 1.2rem 0.8rem;
+  width: 100px;
+  min-width: 100px;
   white-space: nowrap;
   cursor: default;
   overflow: hidden;
-  box-shadow: 0 2px 8px rgba(0,0,0,0.04);
-  transition: border-color .25s, box-shadow .25s;
-}
-.skill-card:hover {
-  border-color: var(--accent, rgba(0,0,0,0.3));
-  box-shadow: 0 8px 28px rgba(0,0,0,0.10), 0 0 0 1px var(--accent, rgba(0,0,0,0.12));
+  transition: transform .25s;
 }
 
 /* Icon wrapper */

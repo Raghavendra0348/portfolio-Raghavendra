@@ -130,23 +130,22 @@ export default function Skills() {
       <div className="section-line absolute top-0 left-0 right-0" />
 
       {/* Header */}
-      <div className="max-w-7xl mx-auto px-6 md:px-12">
-        <motion.div
-          ref={ref}
-          initial={{ opacity: 0, y: 40 }}
-          animate={inView ? { opacity: 1, y: 0 } : {}}
-          transition={{ duration: 0.7 }}
-        >
-          <div className="flex items-center gap-5 mb-4">
-            <span className="font-mono text-xs text-black/25 tracking-[0.2em] uppercase">02.</span>
-            <h2 className="text-3xl md:text-4xl font-bold text-black tracking-tight">Technical Arsenal</h2>
-            <div className="h-px bg-black/8 flex-grow max-w-xs hidden md:block" />
-          </div>
-          <p className="text-black/35 font-mono text-sm mb-14 ml-10 md:ml-14">
-            Technologies I work with daily — hover to explore
-          </p>
-        </motion.div>
-      </div>
+      <motion.div
+        ref={ref}
+        initial={{ opacity: 0, y: 40 }}
+        animate={inView ? { opacity: 1, y: 0 } : {}}
+        transition={{ duration: 0.7 }}
+        className="px-6 md:px-12"
+      >
+        <div className="flex items-center gap-5 mb-4">
+          <span className="font-mono text-xs text-black/25 tracking-[0.2em] uppercase">02.</span>
+          <h2 className="text-3xl md:text-4xl font-bold text-black tracking-tight">Technical Arsenal</h2>
+          <div className="h-px bg-black/8 flex-grow hidden md:block" />
+        </div>
+        <p className="text-black/35 font-mono text-sm mb-14 ml-10 md:ml-14">
+          Technologies I work with daily — hover to explore
+        </p>
+      </motion.div>
 
       {/* Marquee rows */}
       <motion.div
@@ -160,7 +159,7 @@ export default function Skills() {
       </motion.div>
 
       {/* Stats grid */}
-      <div className="max-w-7xl mx-auto px-6 md:px-12 mt-16">
+      <div className="px-6 md:px-12 mt-16">
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={inView ? { opacity: 1, y: 0 } : {}}
