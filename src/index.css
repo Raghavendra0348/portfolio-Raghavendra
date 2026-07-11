@@ -10,6 +10,12 @@
   --border:   rgba(0,0,0,0.1);
   --text:     #000000;
   --muted:    #555555;
+
+  /* AnimatedDock color tokens */
+  --dock-primary:       #000000;
+  --dock-primary-fg:    #ffffff;
+  --dock-secondary:     rgba(255,255,255,0.7);
+  --dock-secondary-fg:  #000000;
 }
 
 body {

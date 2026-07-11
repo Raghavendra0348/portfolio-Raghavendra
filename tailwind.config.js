@@ -5,7 +5,18 @@ export default {
     "./src/**/*.{js,ts,jsx,tsx}",
   ],
   theme: {
-    extend: {},
+    extend: {
+      colors: {
+        primary: {
+          DEFAULT: "var(--dock-primary)",
+          foreground: "var(--dock-primary-fg)",
+        },
+        secondary: {
+          DEFAULT: "var(--dock-secondary)",
+          foreground: "var(--dock-secondary-fg)",
+        },
+      },
+    },
   },
   plugins: [],
 }

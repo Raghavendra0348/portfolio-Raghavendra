@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Github, Linkedin, Mail, Twitter } from 'lucide-react';
 import FloatingBackground from './FloatingBackground';
+import { AnimatedDock } from './ui/animated-dock';
 
 const roles = ['Full Stack Developer', 'React Developer', 'Node.js Engineer', 'ML Enthusiast'];
 
@@ -14,10 +15,10 @@ export default function Hero() {
   }, []);
 
   const socials = [
-    { icon: <Github size={18} />,   href: 'https://github.com/Raghavendra0348',           label: 'GitHub'   },
-    { icon: <Linkedin size={18} />, href: 'https://linkedin.com/in/arella-raghavendra',   label: 'LinkedIn' },
-    { icon: <Mail size={18} />,     href: 'mailto:arellaraghavendra@gmail.com',            label: 'Email'    },
-    // { icon: <Twitter size={18} />,  href: '#',                                             label: 'Twitter'  },
+    { Icon: <Github size={20} />,   link: 'https://github.com/Raghavendra0348',         target: '_blank'  },
+    { Icon: <Linkedin size={20} />, link: 'https://linkedin.com/in/arella-raghavendra', target: '_blank'  },
+    { Icon: <Mail size={20} />,     link: 'mailto:arellaraghavendra@gmail.com'                            },
+    
   ];
 
   return (
@@ -42,9 +43,10 @@ export default function Hero() {
           <motion.h1
             initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.55, delay: 0.08 }}
-            className="text-4xl md:text-6xl lg:text-[4.5rem] font-extrabold text-black leading-[1.04] tracking-tight mb-4"
+            className="font-extrabold text-black tracking-tight mb-4 leading-tight flex flex-col"
           >
-            I am Raghavendra<br />Arella.
+            <span style={{ fontSize: '3rem' }}>I am</span>
+            <span style={{ fontSize: '3.5rem' }}>Raghavendra Arella.</span>
           </motion.h1>
 
           {/* Animated role */}
@@ -87,23 +89,10 @@ export default function Hero() {
           </motion.div>
 
           <motion.div
-            initial={{ opacity: 0 }} animate={{ opacity: 1 }}
+            initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.45 }}
-            className="flex items-center gap-3"
           >
-            {socials.map((s, i) => (
-              <motion.a key={s.label} href={s.href}
-                target={s.href.startsWith('http') ? '_blank' : undefined}
-                rel="noopener noreferrer" title={s.label}
-                initial={{ opacity: 0, scale: 0.8 }}
-                animate={{ opacity: 1, scale: 1 }}
-                transition={{ delay: 0.45 + i * 0.07 }}
-                whileHover={{ scale: 1.1, y: -2 }}
-                className="w-11 h-11 rounded-full border-[1.5px] border-black/20 flex items-center justify-center text-black/55 hover:bg-black hover:border-black hover:text-white transition-all"
-              >
-                {s.icon}
-              </motion.a>
-            ))}
+            <AnimatedDock items={socials} className="backdrop-blur-sm" />
           </motion.div>
         </div>
 

@@ -7,36 +7,36 @@ import { ArrowRight, Code2, Sparkles, ChevronLeft, ChevronRight } from "lucide-r
 const projects = [
   {
     id: "01",
+    title: "Kids Hobbies ML",
+    subtitle: "ML Prediction System",
+    tag: "Machine Learning · Live",
+    image: "/kids_hobby.png",
+    tech: ["React", "Django", "scikit-learn", "SQLite"],
+    github: "https://github.com/Raghavendra0348/Kids_Hobby_Prediction_New",
+    live: "https://kids-hobby-prediction-new.vercel.app",
+    accent: "#F59E0B",
+  },
+  {
+    id: "02",
     title: "PaperVault",
     subtitle: "RGUKT Question Paper Repository",
     tag: "Full Stack Web App",
     image: "/rgukt_sgpa_cgpa_calculator.png",
     tech: ["Node.js", "Express.js", "MySQL", "Sequelize"],
-    github: "https://github.com/Raghavendra0348",
-    live: null,
+    github: "https://github.com/Raghavendra0348/WT_Project",
+    live: "https://rgukt-question-papers.vercel.app/",
     accent: "#6366F1",
   },
   {
-    id: "02",
+    id: "03",
     title: "Medha AI",
     subtitle: "RGUKT Campus Assistant",
     tag: "AI-Powered · Live",
-    image: "/illustration.png",
+    image: "/medha.png",
     tech: ["React", "Node.js", "Firebase", "Gemini API"],
-    github: "https://github.com/Raghavendra0348",
-    live: "#",
+    github: "https://github.com/Raghavendra0348/IT_Club_Hackathon",
+    live: "https://rgukt-medha-ai.vercel.app/",
     accent: "#10B981",
-  },
-  {
-    id: "03",
-    title: "Kids Hobbies ML",
-    subtitle: "ML Prediction System",
-    tag: "Machine Learning",
-    image: "/kids_hobby.png",
-    tech: ["React", "Django", "scikit-learn", "SQLite"],
-    github: "https://github.com/Raghavendra0348",
-    live: null,
-    accent: "#F59E0B",
   },
   {
     id: "04",
@@ -45,19 +45,19 @@ const projects = [
     tag: "Work · Live",
     image: "/bloomer.png",
     tech: ["Node.js", "Express.js", "React.js", "Firestore"],
-    github: "https://github.com/Raghavendra0348",
-    live: "#",
+    github: "https://github.com/Raghavendra0348/demo",
+    live: "https://bloomer.in",
     accent: "#EC4899",
   },
   {
     id: "05",
-    title: "Bit Code Converter",
-    subtitle: "Number System Converter",
+    title: "Digital Logic Design",
+    subtitle: "Number System Tool",
     tag: "Web App · Live",
-    image: "/bit_code_converter.png",
-    tech: ["HTML", "CSS", "JavaScript", "Firebase"],
-    github: "https://github.com/Raghavendra0348/bit-code-converter",
-    live: "https://bit-code-converter.vercel.app/",
+    image: "/digital.png",
+    tech: ["React", "TypeScript", "Tailwind CSS", "Shadcn/ui"],
+    github: "https://github.com/Raghavendra0348/digital-logic-dsign",
+    live: "https://digital-logic-design.vercel.app/",
     accent: "#3B82F6",
   },
 ];
@@ -181,35 +181,14 @@ function StraightCarousel() {
                 {p.id} / 05
               </p>
               <h3
-                className="font-extrabold leading-tight mb-1 text-white"
+                className="font-extrabold leading-tight mb-2 text-white"
                 style={{ fontSize: "clamp(1rem, 2.4vw, 1.5rem)", letterSpacing: "-0.02em" }}
               >
                 {p.title}
               </h3>
-              <p className="font-medium mb-4" style={{ fontSize: 11, color: "rgba(255,255,255,0.38)" }}>
-                {p.subtitle}
-              </p>
 
-              {/* tech pills */}
-              <div className="flex flex-wrap gap-1.5 mb-5">
-                {p.tech.map(t => (
-                  <span
-                    key={t}
-                    className="font-mono font-semibold uppercase"
-                    style={{
-                      fontSize: 9, padding: "3px 9px", borderRadius: 20,
-                      border: `1px solid ${p.accent}55`,
-                      color: p.accent, background: `${p.accent}15`,
-                      letterSpacing: "0.07em",
-                    }}
-                  >
-                    {t}
-                  </span>
-                ))}
-              </div>
-
-              {/* CTA buttons */}
-              <div className="flex gap-2">
+              {/* CTA buttons — under the project name */}
+              <div className="flex gap-2 mb-3">
                 <a
                   href={p.github}
                   target="_blank"
@@ -246,6 +225,28 @@ function StraightCarousel() {
                     Live Demo
                   </a>
                 )}
+              </div>
+
+              <p className="font-medium mb-4" style={{ fontSize: 11, color: "rgba(255,255,255,0.38)" }}>
+                {p.subtitle}
+              </p>
+
+              {/* tech pills */}
+              <div className="flex flex-wrap gap-1.5">
+                {p.tech.map(t => (
+                  <span
+                    key={t}
+                    className="font-mono font-semibold uppercase"
+                    style={{
+                      fontSize: 9, padding: "3px 9px", borderRadius: 20,
+                      border: `1px solid ${p.accent}55`,
+                      color: p.accent, background: `${p.accent}15`,
+                      letterSpacing: "0.07em",
+                    }}
+                  >
+                    {t}
+                  </span>
+                ))}
               </div>
             </div>
           </motion.div>

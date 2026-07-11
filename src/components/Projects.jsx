@@ -5,25 +5,51 @@ import FlowArt, { FlowSection } from './ui/story-scroll';
 const projects = [
   {
     num:         '01',
+    title:       'Kids Hobbies ML',
+    subtitle:    'ML Prediction System',
+    tag:         'Machine Learning · Live',
+    bullets: [
+      'Developed a Random Forest-based hobby recommendation system for children aged 5–12, trained on 12,000+ records achieving 93% prediction accuracy.',
+      'Engineered a questionnaire with 36+ behavioral, academic, sports, arts, health, and analytical-thinking parameters to identify interests and predict suitable hobbies.',
+      'Performed comparative evaluation of Random Forest, SVM, KNN, and Decision Tree models, selecting the best based on accuracy and generalization.',
+      'Built a full-stack platform using React, Django, scikit-learn & JWT Authentication with prediction history, user feedback, and interactive analytics dashboards.',
+    ],
+    tech:        ['React', 'Django', 'Django REST Framework', 'scikit-learn', 'SQLite', 'JWT Auth', 'Python'],
+    github:      'https://github.com/Raghavendra0348/Kids_Hobby_Prediction_New',
+    live:        'https://kids-hobby-prediction-new.vercel.app',
+    bg:          '#1A3DE8',
+    color:       '#ffffff',
+    accent:      '#FEBC2E',
+    image:       '/kids_hobby.png',
+  },
+  {
+    num:         '02',
     title:       'PaperVault',
     subtitle:    'RGUKT Question Paper Repository',
     tag:         'Full Stack Web App',
-    description: 'Platform for RGUKT students to access and manage question papers across campuses. Advanced search and filtering by course, campus, exam type, and year. Secure JWT authentication with bookmarks, download tracking, and an admin dashboard for uploads and analytics.',
-    tech:        ['Node.js', 'Express.js', 'MySQL', 'Sequelize', 'JavaScript'],
+    bullets: [
+      'Built a centralized repository with search, subject-wise filtering, bookmarks, download tracking, and JWT authentication for RGUKT students.',
+      'Implemented a student upload & admin approval workflow, enabling moderated contributions and maintaining content authenticity.',
+      'Developed an admin dashboard to manage users, papers, approvals, and analytics using Node.js, Express.js, MySQL, and Sequelize ORM.',
+    ],
+    tech:        ['React', 'Node.js', 'Express.js', 'MySQL', 'Sequelize ORM', 'JWT Auth'],
     github:      'https://github.com/Raghavendra0348/WT_Project',
     live:        'https://rgukt-question-papers.vercel.app/',
-    bg:          '#f5f0e8',   // warm off-white
+    bg:          '#f5f0e8',
     color:       '#000000',
     accent:      '#6366F1',
     image:       '/image.png',
   },
   {
-    num:         '02',
+    num:         '03',
     title:       'Medha AI',
     subtitle:    'RGUKT Campus Assistant',
     tag:         'AI-Powered · Live',
-    description: 'Multilingual AI assistant using Gemini API for real-time campus queries. Voice interaction, image analysis, and multilingual support. Modules for academics, campus services, and administrative guidance with complaint tracking and role-based authentication.',
-    tech:        ['React', 'Node.js', 'Firebase', 'Gemini API'],
+    bullets: [
+      'Built a multilingual AI campus assistant powered by the Gemini API, integrating voice input, image analysis, and text-based conversations for academic, administrative, and campus queries.',
+      'Designed and implemented a role-based complaint management system with RBAC, enabling students and administrators to submit, track, and resolve campus issues end-to-end.',
+    ],
+    tech:        ['React', 'Node.js', 'Express.js', 'Firebase', 'Gemini API', 'RBAC'],
     github:      'https://github.com/Raghavendra0348/IT_Club_Hackathon',
     live:        'https://rgukt-medha-ai.vercel.app/',
     bg:          '#000000',
@@ -32,26 +58,12 @@ const projects = [
     image:       '/medha.png',
   },
   {
-    num:         '03',
-    title:       'Kids Hobbies ML',
-    subtitle:    'ML Prediction System',
-    tag:         'Machine Learning',
-    description: 'Machine Learning system to predict hobbies for children (5–12) using Random Forest. 13-parameter prediction model with multi-algorithm comparison. JWT authentication with prediction history, feedback system, and admin dashboard with ML performance visualizations.',
-    tech:        ['React', 'Django', 'DRF', 'scikit-learn', 'SQLite'],
-    github:      'https://github.com/Sivananda10/Basic_Project',
-    live:        null,
-    bg:          '#1A3DE8',   // bold blue
-    color:       '#ffffff',
-    accent:      '#FEBC2E',
-    image:       '/kids_hobby.png',
-  },
-  {
     num:         '04',
     title:       'Bloomer',
     subtitle:    'Video-First E-Commerce Platform',
     tag:         'Work · Live',
     description: 'Built a Comming Soon Landing page for Next-generation video-first e-commerce platform focused on creator-driven commerce. Scalable backend APIs with real-time data handling via Firestore, and an interactive UI designed for seamless watch, swipe, and shop experiences.',
-    tech:        ['Node.js', 'Express.js', 'React.js', 'Firestore'],
+    tech:        ['React.js', 'Node.js', 'Express.js', 'Firestore', 'Firebase'],
     github:      'https://github.com/Raghavendra0348/demo',
     live:        'https://bloomer.in',
     bg:          '#EC4899',   // pink
@@ -65,7 +77,7 @@ const projects = [
     subtitle:    'Number System Tool',
     tag:         'Web App · Live',
     description: 'Built an interactive Digital Logic learning platform with real-time circuit simulations and visual explanations.Includes modules like Boolean Algebra, K-Maps, Adders, Counters, Flip-Flops, and Hamming Code.Designed a modern responsive interface to help students learn digital electronics easily and visually.',
-    tech:        [' React 18 + TypeScript', 'Tailwind CSS', 'Shadcn/ui + Radix UI', 'Framer motion Animation'],
+    tech:        ['React 18', 'TypeScript', 'Tailwind CSS', 'Shadcn/ui', 'Radix UI', 'Framer Motion'],
     github:      'https://github.com/Raghavendra0348/digital-logic-dsign',
     live:        'https://digital-logic-design.vercel.app/',
     bg:          '#0a0a0a',   // near black
@@ -110,57 +122,9 @@ function ProjectContent({ p }) {
           >
             {p.title}
           </h2>
-          <p className="mt-3 font-mono text-sm" style={{ color: muted }}>
-            {p.subtitle}
-          </p>
-        </div>
 
-        {/* project image */}
-        <div
-          className="w-full shrink-0 rounded-2xl overflow-hidden"
-          style={{
-            maxWidth: 'min(100%, clamp(280px, 34vw, 600px))',
-            aspectRatio: '16/10',
-            border: `1px solid ${border}`,
-          }}
-        >
-          <img
-            src={p.image}
-            alt={p.title}
-            className="w-full h-full object-cover object-top"
-          />
-        </div>
-      </div>
-
-      {/* ── divider ── */}
-      <hr className="my-4" style={{ border: 'none', borderTop: `1px solid ${border}` }} />
-
-      {/* ── bottom row: description + tech + links ── */}
-      <div className="flex flex-col md:flex-row gap-6 md:gap-8 md:items-end pb-8 md:pb-0">
-        {/* description */}
-        <p
-          className="flex-1 text-[clamp(0.9rem,1.4vw,1.05rem)] leading-relaxed"
-          style={{ color: muted, maxWidth: '52ch' }}
-        >
-          {p.description}
-        </p>
-
-        <div className="flex flex-col gap-4 md:items-end shrink-0">
-          {/* tech pills */}
-          <div className="flex flex-wrap gap-2 md:justify-end">
-            {p.tech.map(t => (
-              <span
-                key={t}
-                className="font-mono text-[10px] font-semibold uppercase tracking-wider px-2.5 py-1 rounded-full"
-                style={{ border: `1px solid ${border}`, color: p.color }}
-              >
-                {t}
-              </span>
-            ))}
-          </div>
-
-          {/* CTA links */}
-          <div className="flex gap-3">
+          {/* CTA links — directly under project name */}
+          <div className="flex gap-3 mt-4">
             <a
               href={p.github}
               target="_blank"
@@ -190,6 +154,78 @@ function ProjectContent({ p }) {
               </a>
             )}
           </div>
+
+          <p className="mt-3 font-mono text-sm" style={{ color: muted }}>
+            {p.subtitle}
+          </p>
+
+          {/* Tech Stack — right below subtitle */}
+          <div className="mt-4">
+            <p
+              className="font-mono font-bold text-[10px] uppercase tracking-[0.18em] mb-2"
+              style={{ color: p.accent }}
+            >
+              Tech Stack
+            </p>
+            <div className="flex flex-wrap gap-2">
+              {p.tech.map(t => (
+                <span
+                  key={t}
+                  className="font-mono text-[11px] font-semibold px-3 py-1 rounded-full"
+                  style={{
+                    background: `${p.accent}18`,
+                    border: `1px solid ${p.accent}44`,
+                    color: p.color,
+                  }}
+                >
+                  {t}
+                </span>
+              ))}
+            </div>
+          </div>
+        </div>
+
+        {/* project image */}
+        <div
+          className="w-full shrink-0 rounded-2xl overflow-hidden"
+          style={{
+            maxWidth: 'min(100%, clamp(280px, 34vw, 600px))',
+            aspectRatio: '16/10',
+            border: `1px solid ${border}`,
+          }}
+        >
+          <img
+            src={p.image}
+            alt={p.title}
+            className="w-full h-full object-cover object-top"
+          />
+        </div>
+      </div>
+
+      {/* ── divider ── */}
+      <hr className="my-4" style={{ border: 'none', borderTop: `1px solid ${border}` }} />
+
+      {/* ── bottom row: description / bullets (full width) ── */}
+      <div className="pb-8 md:pb-0">
+        {/* description / bullets */}
+        <div>
+          {p.bullets ? (
+            <ul className="space-y-2">
+              {p.bullets.map((b, i) => (
+                <li key={i} className="flex gap-2 text-[clamp(0.78rem,1.2vw,0.92rem)] leading-relaxed">
+                  <span style={{ color: p.accent, flexShrink: 0, marginTop: '0.25em' }}>▸</span>
+                  <span style={{ color: muted }}>{b}</span>
+                </li>
+              ))}
+            </ul>
+          ) : (
+            <p
+              className="text-[clamp(0.9rem,1.4vw,1.05rem)] leading-relaxed"
+              style={{ color: muted, maxWidth: '56ch' }}
+            >
+              {p.description}
+            </p>
+          )}
         </div>
       </div>
     </>
