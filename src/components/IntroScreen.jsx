@@ -1,7 +1,8 @@
-import { useState, useEffect } from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
+import { useEffect, useState } from 'react';
+import { motion, useReducedMotion } from 'framer-motion';
 import { SpiralAnimation } from '@/components/ui/spiral-animation';
 
+const INTRO_DURATION_MS = 5000;
 const LOADING_PHRASES = [
   'Initialising universe...',
   'Calibrating creativity...',
@@ -11,149 +12,66 @@ const LOADING_PHRASES = [
 
 export default function IntroScreen({ onComplete }) {
   const [phraseIndex, setPhraseIndex] = useState(0);
-  const [showEnter, setShowEnter]     = useState(false);
-  const [exiting, setExiting]         = useState(false);
+  const reducedMotion = useReducedMotion();
 
-  /* Cycle through loading phrases */
   useEffect(() => {
-    const id = setInterval(() => {
-      setPhraseIndex(i => {
-        const next = i + 1;
-        if (next >= LOADING_PHRASES.length) {
-          clearInterval(id);
-          setTimeout(() => setShowEnter(true), 600);
-          return i;
-        }
-        return next;
-      });
-    }, 1100);
-    return () => clearInterval(id);
-  }, []);
-
-  /* Auto-advance after 6 s so user doesn't have to click */
-  useEffect(() => {
-    const id = setTimeout(() => handleEnter(), 6800);
-    return () => clearTimeout(id);
-  }, []);
-
-  function handleEnter() {
-    if (exiting) return;
-    setExiting(true);
-    setTimeout(onComplete, 1100);
-  }
+    const phrases = setInterval(() => {
+      setPhraseIndex(i => Math.min(i + 1, LOADING_PHRASES.length - 1));
+    }, INTRO_DURATION_MS / LOADING_PHRASES.length);
+    const complete = setTimeout(onComplete, INTRO_DURATION_MS);
+    return () => {
+      clearInterval(phrases);
+      clearTimeout(complete);
+    };
+  }, [onComplete]);
 
   return (
-    <AnimatePresence>
-      {!exiting ? (
-        <motion.div
-          key="intro"
-          className="fixed inset-0 z-[9999] bg-black overflow-hidden"
-          exit={{ opacity: 0 }}
-          transition={{ duration: 1.0, ease: 'easeInOut' }}
-        >
-          {/* Spiral canvas */}
-          <div className="absolute inset-0">
-            <SpiralAnimation />
-          </div>
-
-          {/* Subtle vignette */}
-          <div
-            className="absolute inset-0 pointer-events-none"
-            style={{
-              background: 'radial-gradient(ellipse at center, transparent 30%, rgba(0,0,0,0.65) 100%)',
-            }}
-          />
-
-          {/* Centre text block */}
-          <div className="absolute inset-0 flex flex-col items-center justify-center gap-8 z-10">
-
-            {/* Name — big headline */}
-            <motion.div
-              initial={{ opacity: 0, y: 30 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 1.2, ease: 'easeOut', delay: 0.3 }}
-              className="text-center"
-            >
-              <p className="font-mono text-white/30 text-xs tracking-[0.35em] uppercase mb-3">
-                portfolio
-              </p>
-              <h1 className="text-white text-5xl md:text-7xl font-bold tracking-tight leading-none"
-                  style={{ fontFamily: "'Space Grotesk', sans-serif" }}>
-                Raghavendra
-              </h1>
-              <p className="text-white/20 text-base md:text-lg tracking-widest mt-2 font-light">
-                Full Stack Developer
-              </p>
-            </motion.div>
-
-            {/* Thin separator */}
-            <motion.div
-              initial={{ scaleX: 0 }}
-              animate={{ scaleX: 1 }}
-              transition={{ duration: 1.0, delay: 0.8 }}
-              className="w-16 h-px bg-white/20 origin-left"
-            />
-
-            {/* Cycling loading phrase */}
-            <div className="h-6 overflow-hidden">
-              <AnimatePresence mode="wait">
-                <motion.p
-                  key={phraseIndex}
-                  initial={{ y: 20, opacity: 0 }}
-                  animate={{ y: 0,  opacity: 1 }}
-                  exit={{ y: -20, opacity: 0 }}
-                  transition={{ duration: 0.4 }}
-                  className="text-white/40 font-mono text-xs tracking-[0.2em] uppercase text-center"
-                >
-                  {LOADING_PHRASES[phraseIndex]}
-                </motion.p>
-              </AnimatePresence>
-            </div>
-
-            {/* Enter button — fades in when ready */}
-            <AnimatePresence>
-              {showEnter && (
-                <motion.button
-                  key="enter"
-                  initial={{ opacity: 0, y: 12 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  exit={{ opacity: 0 }}
-                  transition={{ duration: 0.7 }}
-                  onClick={handleEnter}
-                  className="mt-4 text-white/60 text-sm tracking-[0.35em] uppercase font-extralight
-                             border border-white/15 rounded-full px-8 py-3
-                             hover:text-white hover:border-white/50
-                             transition-all duration-500 hover:tracking-[0.5em]
-                             backdrop-blur-sm"
-                >
-                  
-                </motion.button>
-              )}
-            </AnimatePresence>
-          </div>
-
-          {/* Bottom bar */}
-          <motion.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            transition={{ delay: 1.5, duration: 1 }}
-            className="absolute bottom-6 left-0 right-0 flex justify-center"
-          >
-            <p className="font-mono text-white/15 text-[10px] tracking-[0.3em] uppercase">
-              arellaraghavendra@gmail.com
-            </p>
-          </motion.div>
-        </motion.div>
-      ) : (
-        /* Fade-out overlay */
-        <motion.div
-          key="exit"
-          className="fixed inset-0 z-[9998] bg-black pointer-events-none"
-          initial={{ opacity: 1 }}
-          animate={{ opacity: 0 }}
-          transition={{ duration: 1.0, ease: 'easeInOut' }}
-        />
+    <motion.div
+      className="fixed inset-0 z-[9999] bg-black overflow-hidden"
+      exit={{ opacity: 0 }}
+      transition={{ duration: reducedMotion ? 0 : 0.3, ease: 'easeOut' }}
+    >
+      {/* Keep the decorative spiral visible at full brightness. */}
+      {!reducedMotion && (
+        <div className="absolute inset-0 pointer-events-none" aria-hidden="true">
+          <SpiralAnimation />
+        </div>
       )}
-    </AnimatePresence>
+
+      <div className="relative z-10 flex h-full flex-col items-center justify-center gap-6 px-5 py-16 text-center">
+        <motion.div
+          initial={reducedMotion ? false : { opacity: 0, y: 16 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.45, ease: 'easeOut' }}
+          className="w-full max-w-4xl"
+        >
+          <p className="font-mono text-white/60 text-xs tracking-[0.35em] uppercase mb-4">
+            Portfolio
+          </p>
+          <h1
+            className="text-white font-bold tracking-tight leading-none"
+            style={{ fontFamily: "'Space Grotesk', sans-serif", fontSize: 'clamp(2rem, 8vw, 6rem)' }}
+          >
+            Raghavendra
+          </h1>
+          <p
+            className="text-white/90 text-base md:text-xl tracking-wide mt-4 font-medium"
+            style={{ textShadow: '0 2px 8px #000, 0 0 16px #000' }}
+          >
+            Full Stack Developer
+          </p>
+        </motion.div>
+
+        <div role="status" aria-label="Loading portfolio" className="flex flex-col items-center gap-4">
+          <p aria-hidden="true" className="font-mono text-white/70 text-[10px] sm:text-xs tracking-[0.16em] uppercase">
+            {LOADING_PHRASES[phraseIndex]}
+          </p>
+        </div>
+      </div>
+
+      <p className="absolute bottom-6 left-4 right-4 text-center font-mono text-white/50 text-[10px] tracking-wider">
+        arellaraghavendra@gmail.com
+      </p>
+    </motion.div>
   );
 }

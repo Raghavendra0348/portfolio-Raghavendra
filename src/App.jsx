@@ -30,7 +30,7 @@ function App() {
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             transition={{ duration: 0.8, ease: 'easeOut' }}
-            className="relative w-full min-h-screen bg-[#05060A] text-[#E2E8F0]"
+            className="relative w-full min-h-screen overflow-x-clip bg-[#05060A] text-[#E2E8F0]"
           >
             <div className="bg-noise" />
             <Navbar />

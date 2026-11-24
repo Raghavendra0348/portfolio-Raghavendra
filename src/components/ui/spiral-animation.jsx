@@ -119,7 +119,7 @@ class AnimationController {
   _setupTimeline() {
     this.timeline = gsap.timeline({ repeat: -1 });
     this.timeline.to(this, {
-      time: 1, duration: 15, repeat: -1, ease: 'none',
+      time: 1, duration: 5, repeat: -1, ease: 'none',
       onUpdate: () => this.render(),
     });
   }
@@ -166,11 +166,12 @@ class AnimationController {
     ctx.fillRect(0, 0, this.size, this.size);
     ctx.save();
     ctx.translate(this.size / 2, this.size / 2);
+    ctx.scale(this.size / 600, this.size / 600);
 
     const t1 = this.constrain(this.map(this.time, 0, this.changeEventTime + 0.25, 0, 1), 0, 1);
     const t2 = this.constrain(this.map(this.time, this.changeEventTime, 1, 0, 1), 0, 1);
 
-    ctx.rotate(-Math.PI * this.ease(t2, 2.7));
+    ctx.rotate(-Math.PI * 0.5 * this.ease(t2, 2.7));
 
     /* Trail */
     for (let i = 0; i < this.trailLength; i++) {
@@ -231,12 +232,13 @@ export function SpiralAnimation() {
     if (!ctx) return;
 
     const dpr  = window.devicePixelRatio || 1;
-    const size = Math.max(dims.width, dims.height);
+    // Use one square coordinate space without stretching the rings.
+    const size = Math.min(dims.width, dims.height);
 
     canvas.width  = size * dpr;
     canvas.height = size * dpr;
-    canvas.style.width  = `${dims.width}px`;
-    canvas.style.height = `${dims.height}px`;
+    canvas.style.width  = `${size}px`;
+    canvas.style.height = `${size}px`;
     ctx.scale(dpr, dpr);
 
     animRef.current = new AnimationController(canvas, ctx, dpr, size);
@@ -245,7 +247,7 @@ export function SpiralAnimation() {
 
   return (
     <div className="relative w-full h-full">
-      <canvas ref={canvasRef} className="absolute inset-0 w-full h-full" />
+      <canvas ref={canvasRef} className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2" />
     </div>
   );
 }

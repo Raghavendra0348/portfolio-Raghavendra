@@ -4,7 +4,43 @@ import FlowArt, { FlowSection } from './ui/story-scroll';
 // ── Project data ──────────────────────────────────────────────────────────────
 const projects = [
   {
-    num:         '01',
+    num: '01',
+    title: 'Amazon Clone',
+    subtitle: 'Full-Stack E-Commerce Platform',
+    tag: 'E-Commerce · Live',
+    bullets: [
+      'Built an Amazon-inspired storefront with product search, category filters, sorting, product reviews, and a responsive shopping experience.',
+      'Implemented customer accounts, wishlists, cart management, saved addresses, Cash on Delivery, and Razorpay checkout.',
+      'Developed order tracking and an admin dashboard for products, inventory, users, and orders using Express, PostgreSQL, and Prisma.',
+    ],
+    tech: ['React', 'Tailwind CSS', 'Node.js', 'Express', 'PostgreSQL', 'Prisma', 'Razorpay'],
+    github: 'https://github.com/Raghavendra0348/E_commerce',
+    live: 'https://amazon-clone-e-commerce-18.vercel.app',
+    bg: '#131921',
+    color: '#ffffff',
+    accent: '#FF9900',
+    image: '/amazon-ecommerce.png',
+  },
+  {
+    num: '02',
+    title: 'DSA Prep Platform',
+    subtitle: 'Company-Wise Interview Preparation',
+    tag: 'Full Stack · Live',
+    bullets: [
+      'Built a company-wise interview preparation platform with LeetCode questions organized by company, topic, difficulty, and recency.',
+      'Implemented a structured DSA roadmap, global search, bookmarks, personal notes, and question progress tracking.',
+      'Developed authenticated dashboards with practice analytics using React, TanStack Query, Express, PostgreSQL, and Prisma.',
+    ],
+    tech: ['React', 'TanStack Query', 'Node.js', 'Express', 'PostgreSQL', 'Prisma', 'JWT Auth'],
+    github: 'https://github.com/Raghavendra0348/DSA_Prep_Platform',
+    live: 'https://dsa-preparation-platform.vercel.app/',
+    bg: '#f4f0e8',
+    color: '#000000',
+    accent: '#C74528',
+    image: '/dsa-prep.png',
+  },
+  {
+    num:         '03',
     title:       'Kids Hobbies ML',
     subtitle:    'ML Prediction System',
     tag:         'Machine Learning · Live',
@@ -22,69 +58,7 @@ const projects = [
     accent:      '#FEBC2E',
     image:       '/kids_hobby.png',
   },
-  {
-    num:         '02',
-    title:       'PaperVault',
-    subtitle:    'RGUKT Question Paper Repository',
-    tag:         'Full Stack Web App',
-    bullets: [
-      'Built a centralized repository with search, subject-wise filtering, bookmarks, download tracking, and JWT authentication for RGUKT students.',
-      'Implemented a student upload & admin approval workflow, enabling moderated contributions and maintaining content authenticity.',
-      'Developed an admin dashboard to manage users, papers, approvals, and analytics using Node.js, Express.js, MySQL, and Sequelize ORM.',
-    ],
-    tech:        ['React', 'Node.js', 'Express.js', 'MySQL', 'Sequelize ORM', 'JWT Auth'],
-    github:      'https://github.com/Raghavendra0348/WT_Project',
-    live:        'https://rgukt-question-papers.vercel.app/',
-    bg:          '#f5f0e8',
-    color:       '#000000',
-    accent:      '#6366F1',
-    image:       '/image.png',
-  },
-  {
-    num:         '03',
-    title:       'Medha AI',
-    subtitle:    'RGUKT Campus Assistant',
-    tag:         'AI-Powered · Live',
-    bullets: [
-      'Built a multilingual AI campus assistant powered by the Gemini API, integrating voice input, image analysis, and text-based conversations for academic, administrative, and campus queries.',
-      'Designed and implemented a role-based complaint management system with RBAC, enabling students and administrators to submit, track, and resolve campus issues end-to-end.',
-    ],
-    tech:        ['React', 'Node.js', 'Express.js', 'Firebase', 'Gemini API', 'RBAC'],
-    github:      'https://github.com/Raghavendra0348/IT_Club_Hackathon',
-    live:        'https://rgukt-medha-ai.vercel.app/',
-    bg:          '#000000',
-    color:       '#ffffff',
-    accent:      '#10B981',
-    image:       '/medha.png',
-  },
-  {
-    num:         '04',
-    title:       'Bloomer',
-    subtitle:    'Video-First E-Commerce Platform',
-    tag:         'Work · Live',
-    description: 'Built a Comming Soon Landing page for Next-generation video-first e-commerce platform focused on creator-driven commerce. Scalable backend APIs with real-time data handling via Firestore, and an interactive UI designed for seamless watch, swipe, and shop experiences.',
-    tech:        ['React.js', 'Node.js', 'Express.js', 'Firestore', 'Firebase'],
-    github:      'https://github.com/Raghavendra0348/demo',
-    live:        'https://bloomer.in',
-    bg:          '#EC4899',   // pink
-    color:       '#ffffff',
-    accent:      '#ffffff',
-    image:       '/bloomer.png',
-  },
-  {
-    num:         '05',
-    title:       'Digital Logic Design',
-    subtitle:    'Number System Tool',
-    tag:         'Web App · Live',
-    description: 'Built an interactive Digital Logic learning platform with real-time circuit simulations and visual explanations.Includes modules like Boolean Algebra, K-Maps, Adders, Counters, Flip-Flops, and Hamming Code.Designed a modern responsive interface to help students learn digital electronics easily and visually.',
-    tech:        ['React 18', 'TypeScript', 'Tailwind CSS', 'Shadcn/ui', 'Radix UI', 'Framer Motion'],
-    github:      'https://github.com/Raghavendra0348/digital-logic-dsign',
-    live:        'https://digital-logic-design.vercel.app/',
-    bg:          '#0a0a0a',   // near black
-    color:       '#ffffff',
-    accent:      '#3B82F6',
-    image:       '/digital.png',
-  },
+
 ];
 
 // ── Single project FlowSection content ───────────────────────────────────────
@@ -95,9 +69,9 @@ function ProjectContent({ p }) {
   return (
     <>
       {/* ── top row: number + tag ── */}
-      <div className="flex items-center justify-between">
+      <div className="flex flex-wrap items-center justify-between gap-3">
         <p className="font-mono font-bold text-xs tracking-[0.2em] uppercase" style={{ color: p.accent }}>
-          {p.num} / 05
+          {p.num} / {projects.length.toString().padStart(2, '0')}
         </p>
         <span
           className="font-mono font-bold text-[10px] uppercase tracking-widest px-3 py-1 rounded-full"
@@ -111,12 +85,12 @@ function ProjectContent({ p }) {
       <hr className="my-4" style={{ border: 'none', borderTop: `1px solid ${border}` }} />
 
       {/* ── middle: title + image ── */}
-      <div className="flex flex-col md:flex-row items-start md:items-end gap-4 md:flex-1">
-        <div className="flex-1">
+      <div className="grid grid-cols-1 lg:grid-cols-[minmax(0,1.2fr)_minmax(0,1fr)] items-start lg:items-center gap-6 lg:flex-1">
+        <div className="min-w-0">
           <h2
-            className="font-bold leading-[0.85] uppercase tracking-tight"
+            className="font-bold leading-[0.95] uppercase tracking-tight break-words"
             style={{
-              fontSize: 'clamp(2.6rem, 9vw, 10rem)',
+              fontSize: 'clamp(2rem, 5.5vw, 6.5rem)',
               color: p.color,
             }}
           >
@@ -124,12 +98,12 @@ function ProjectContent({ p }) {
           </h2>
 
           {/* CTA links — directly under project name */}
-          <div className="flex gap-3 mt-4">
+          <div className="flex flex-wrap gap-3 mt-4">
             <a
               href={p.github}
               target="_blank"
               rel="noopener noreferrer"
-              className="font-mono font-semibold text-sm px-5 py-2.5 rounded-full transition-opacity hover:opacity-70"
+              className="inline-flex min-h-11 items-center justify-center font-mono font-semibold text-sm px-5 py-2.5 rounded-full transition-opacity hover:opacity-70"
               style={{
                 border: `1.5px solid ${border}`,
                 color: p.color,
@@ -143,7 +117,7 @@ function ProjectContent({ p }) {
                 href={p.live}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="font-mono font-semibold text-sm px-5 py-2.5 rounded-full transition-opacity hover:opacity-80"
+                className="inline-flex min-h-11 items-center justify-center font-mono font-semibold text-sm px-5 py-2.5 rounded-full transition-opacity hover:opacity-80"
                 style={{
                   background: p.accent,
                   color: p.bg,
@@ -189,7 +163,6 @@ function ProjectContent({ p }) {
         <div
           className="w-full shrink-0 rounded-2xl overflow-hidden"
           style={{
-            maxWidth: 'min(100%, clamp(280px, 34vw, 600px))',
             aspectRatio: '16/10',
             border: `1px solid ${border}`,
           }}

@@ -7,6 +7,28 @@ import { ArrowRight, Code2, Sparkles, ChevronLeft, ChevronRight } from "lucide-r
 const projects = [
   {
     id: "01",
+    title: "Amazon Clone",
+    subtitle: "Full-Stack E-Commerce Platform",
+    tag: "E-Commerce · Live",
+    tech: ["React", "Tailwind CSS", "Node.js", "Express", "PostgreSQL", "Prisma", "Razorpay"],
+    github: "https://github.com/Raghavendra0348/E_commerce",
+    live: "https://amazon-clone-e-commerce-18.vercel.app",
+    accent: "#FF9900",
+    image: "/amazon-ecommerce.png",
+  },
+  {
+    id: "02",
+    title: "DSA Prep Platform",
+    subtitle: "Company-Wise Interview Preparation",
+    tag: "Full Stack · Live",
+    tech: ["React", "TanStack Query", "Node.js", "Express", "PostgreSQL", "Prisma", "JWT Auth"],
+    github: "https://github.com/Raghavendra0348/DSA_Prep_Platform",
+    live: "https://dsa-preparation-platform.vercel.app/",
+    accent: "#C74528",
+    image: "/dsa-prep.png",
+  },
+  {
+    id: "03",
     title: "Kids Hobbies ML",
     subtitle: "ML Prediction System",
     tag: "Machine Learning · Live",
@@ -16,50 +38,7 @@ const projects = [
     live: "https://kids-hobby-prediction-new.vercel.app",
     accent: "#F59E0B",
   },
-  {
-    id: "02",
-    title: "PaperVault",
-    subtitle: "RGUKT Question Paper Repository",
-    tag: "Full Stack Web App",
-    image: "/rgukt_sgpa_cgpa_calculator.png",
-    tech: ["Node.js", "Express.js", "MySQL", "Sequelize"],
-    github: "https://github.com/Raghavendra0348/WT_Project",
-    live: "https://rgukt-question-papers.vercel.app/",
-    accent: "#6366F1",
-  },
-  {
-    id: "03",
-    title: "Medha AI",
-    subtitle: "RGUKT Campus Assistant",
-    tag: "AI-Powered · Live",
-    image: "/medha.png",
-    tech: ["React", "Node.js", "Firebase", "Gemini API"],
-    github: "https://github.com/Raghavendra0348/IT_Club_Hackathon",
-    live: "https://rgukt-medha-ai.vercel.app/",
-    accent: "#10B981",
-  },
-  {
-    id: "04",
-    title: "Bloomer",
-    subtitle: "Video-First E-Commerce",
-    tag: "Work · Live",
-    image: "/bloomer.png",
-    tech: ["Node.js", "Express.js", "React.js", "Firestore"],
-    github: "https://github.com/Raghavendra0348/demo",
-    live: "https://bloomer.in",
-    accent: "#EC4899",
-  },
-  {
-    id: "05",
-    title: "Digital Logic Design",
-    subtitle: "Number System Tool",
-    tag: "Web App · Live",
-    image: "/digital.png",
-    tech: ["React", "TypeScript", "Tailwind CSS", "Shadcn/ui"],
-    github: "https://github.com/Raghavendra0348/digital-logic-dsign",
-    live: "https://digital-logic-design.vercel.app/",
-    accent: "#3B82F6",
-  },
+
 ];
 
 // ── Straight peek carousel ────────────────────────────────────────────────────
@@ -100,7 +79,7 @@ function StraightCarousel() {
     >
       {/* ── fake browser bar ── */}
       <div
-        className="shrink-0 h-8 flex items-center gap-1.5 px-3 border-b border-white/5"
+        className="shrink-0 h-11 flex items-center gap-1.5 px-3 border-b border-white/5"
         style={{ background: "#161618" }}
       >
         <span className="w-2.5 h-2.5 rounded-full bg-[#FF5F57]" />
@@ -120,9 +99,9 @@ function StraightCarousel() {
               onClick={() => { go(i); reset(); }}
               aria-label={projects[i].title}
               style={{
-                width: i === active ? 20 : 6, height: 6,
+                width: 24, height: 28,
                 borderRadius: 3, border: "none", cursor: "pointer", padding: 0,
-                background: i === active ? p.accent : "rgba(255,255,255,0.18)",
+                background: "transparent", boxShadow: `inset 0 -4px 0 ${i === active ? p.accent : "rgba(255,255,255,0.18)"}`,
                 transition: "width 0.3s ease, background 0.3s ease",
               }}
             />
@@ -140,11 +119,11 @@ function StraightCarousel() {
             initial="enter"
             animate="center"
             exit="exit"
-            className="absolute inset-0 flex"
+            className="absolute inset-0 flex flex-col md:flex-row overflow-y-auto"
             style={{ background: "#111114" }}
           >
             {/* LEFT: image (full height, 44% width) */}
-            <div className="relative shrink-0 overflow-hidden" style={{ width: "44%" }}>
+            <div className="relative shrink-0 overflow-hidden w-full h-[42%] md:h-full md:w-[44%]">
               <img
                 src={p.image}
                 alt={p.title}
@@ -173,12 +152,12 @@ function StraightCarousel() {
             </div>
 
             {/* RIGHT: info (perfectly straight, centered vertically) */}
-            <div className="flex-1 flex flex-col justify-center px-6 py-5 overflow-hidden">
+            <div className="min-w-0 flex-1 flex flex-col justify-center px-10 py-3 md:py-5">
               <p
                 className="font-mono font-bold mb-1"
                 style={{ fontSize: 10, color: p.accent, letterSpacing: "0.16em" }}
               >
-                {p.id} / 05
+                {p.id} / {projects.length.toString().padStart(2, "0")}
               </p>
               <h3
                 className="font-extrabold leading-tight mb-2 text-white"
@@ -188,12 +167,12 @@ function StraightCarousel() {
               </h3>
 
               {/* CTA buttons — under the project name */}
-              <div className="flex gap-2 mb-3">
+              <div className="flex flex-wrap gap-2 mb-3">
                 <a
                   href={p.github}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="flex items-center gap-1.5 font-semibold hover:opacity-80 transition-opacity"
+                  className="min-h-11 flex items-center justify-center gap-1.5 font-semibold hover:opacity-80 transition-opacity"
                   style={{
                     fontSize: 11, padding: "7px 14px", borderRadius: 8,
                     background: "rgba(255,255,255,0.07)",
@@ -211,7 +190,7 @@ function StraightCarousel() {
                     href={p.live}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="flex items-center gap-1.5 font-semibold hover:opacity-80 transition-opacity"
+                    className="min-h-11 flex items-center justify-center gap-1.5 font-semibold hover:opacity-80 transition-opacity"
                     style={{
                       fontSize: 11, padding: "7px 14px", borderRadius: 8,
                       background: p.accent, color: "#fff", textDecoration: "none",
@@ -258,7 +237,7 @@ function StraightCarousel() {
           aria-label="Previous"
           className="absolute left-2 top-1/2 -translate-y-1/2 z-20 flex items-center justify-center hover:scale-110 transition-transform"
           style={{
-            width: 28, height: 28, borderRadius: "50%",
+            width: 44, height: 44, borderRadius: "50%",
             background: "rgba(0,0,0,0.55)",
             border: "1px solid rgba(255,255,255,0.14)",
             color: "#fff", cursor: "pointer",
@@ -273,7 +252,7 @@ function StraightCarousel() {
           aria-label="Next"
           className="absolute right-2 top-1/2 -translate-y-1/2 z-20 flex items-center justify-center hover:scale-110 transition-transform"
           style={{
-            width: 28, height: 28, borderRadius: "50%",
+            width: 44, height: 44, borderRadius: "50%",
             background: "rgba(0,0,0,0.55)",
             border: "1px solid rgba(255,255,255,0.14)",
             color: "#fff", cursor: "pointer",
